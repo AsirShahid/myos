@@ -54,7 +54,6 @@ modules:
       - procs
       - tldr
 
-
       # network
       - network-manager-applet
       - NetworkManager-l2tp-gnome
@@ -84,6 +83,13 @@ modules:
       - system-config-printer
       - waybar
       - wl-clipboard
+
+      # ags
+      - fzf
+      - swappy
+      - swww
+      - fd-find
+      - 
 
     remove:
       # example: removing firefox (in favor of the flatpak)

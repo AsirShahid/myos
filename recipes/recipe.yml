@@ -69,6 +69,10 @@ modules:
       repo-name: flathub-user
       repo-title: "Flathub (User)"
 
+  - type: script
+    scripts:
+      - nix.sh
+
   - type: signing # this sets up the proper policy & signing files for signed images to work fully
 
 

@@ -52,11 +52,6 @@ modules:
         - org.mozilla.firefox
         - org.gnome.Loupe
         - one.ablaze.floorp//lightning # This is an example of flatpak which has multiple branches in selection (flatpak//branch).
-        - com.valvesoftware.Steam
-        - com.steamgriddb.steam-rom-manager
-        - org.gnome.World.PikaBackup
-        - com.jetbrains.PyCharm-Community
-        - com.visualstudio.code
       # Flatpak runtimes are not supported (like org.winehq.Wine//stable-23.08),
       # only normal flatpak applications are (like Floorp Lightning web browser in this example).
       # Installing different branches of the same Flatpak is not supported.
@@ -72,6 +67,11 @@ modules:
       # Otherwise, it will overwrite the repo configuration.
       install:
         - org.kde.kdenlive # this Flatpak is appended to the insta llist
+        - com.valvesoftware.Steam
+        - com.steamgriddb.steam-rom-manager
+        - org.gnome.World.PikaBackup
+        - com.jetbrains.PyCharm-Community
+        - com.visualstudio.code
     user:
       # repo-name will overwrite the previously-configured repo-name for the user remote
       repo-name: flathub-user

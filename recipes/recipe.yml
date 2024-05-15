@@ -132,6 +132,11 @@ modules:
         - org.wezfurlong.wezterm
         - md.obsidian.Obsidian
         - net.ankiweb.Anki
+        - page.kramo.Cartridges
+        - com.usebottles.bottles
+        - com.vysp3r.ProtonPlus
+        - net.davidotek.pupgui2
+        - org.ryujinx.Ryujinx
     user:
       # repo-name will overwrite the previously-configured repo-name for the user remote
       repo-name: flathub-user

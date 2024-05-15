@@ -27,6 +27,14 @@ modules:
       - ncdu
       - zsh
       - ranger
+
+      # hyprland
+      - hyprland
+      - hyprpaper # wallpaper util
+      - hyprpicker # color picker
+      - hyprshot # screenshot util
+      - xdg-desktop-portal-hyprland # desktop portal
+
     remove:
       # example: removing firefox (in favor of the flatpak)
       # "firefox" is the main package, "firefox-langpacks" is a dependency

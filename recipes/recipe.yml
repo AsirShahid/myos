@@ -27,6 +27,8 @@ modules:
       - ncdu
       - zsh
       - ranger
+      - kitty
+      - emacs
 
       # hyprland
       - hyprland
@@ -72,6 +74,7 @@ modules:
         - org.gnome.World.PikaBackup
         - com.jetbrains.PyCharm-Community
         - com.visualstudio.code
+        - com.mattjakeman.ExtensionManager
     user:
       # repo-name will overwrite the previously-configured repo-name for the user remote
       repo-name: flathub-user
@@ -80,6 +83,7 @@ modules:
   - type: script
     scripts:
       - nix.sh
+      - getbeeper.sh
 
   - type: signing # this sets up the proper policy & signing files for signed images to work fully
 

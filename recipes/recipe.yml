@@ -85,11 +85,11 @@ modules:
       - wl-clipboard
 
       # ags
+      - aylurs-gtk-shell
       - fzf
       - swappy
       - swww
       - fd-find
-      - 
 
     remove:
       # example: removing firefox (in favor of the flatpak)

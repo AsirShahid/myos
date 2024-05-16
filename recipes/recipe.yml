@@ -27,12 +27,16 @@ modules:
       - neovim
       - ncdu
       - zsh
+      - fish
+      - xonsh
       - ranger
       - kitty
       - emacs
       - rclone
       - restic
       - gnome-shell-extension-pop-shell
+      - kdeconnectd
+      - fastfetch
 
       # hyprland
       - hyprland

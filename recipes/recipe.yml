@@ -57,13 +57,6 @@ modules:
 
       # sway
       - sway
-      - waybar
-      - sway-config-fedora
-      - sway-contrib
-      - grim
-      - grimshot
-      - swaylock-effects
-      - swaylock
 
       # audio
       - pavucontrol

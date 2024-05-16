@@ -204,6 +204,27 @@ modules:
     # Policy for handling file that has changed on disk compared to your repo. Accepts "skip" or "replace"
     changed-file-policy: "skip" # Optional - Default: "skip" - Expects type: string
 
+  - type: systemd
+    system:
+      enabled:
+        nix-daemon.service
+        #- example.service # Enabled (runs on system boot)
+      disabled:
+        #- example.target # Disabled (does not run on system boot, unless other unit strictly requires it)
+      masked:
+        #- example.service # Masked (does not run on system boot, under any circumstances)
+      unmasked:
+        #- example.service # Unmasked (runs on system boot, even if previously masked)
+    user:
+      enabled:
+        #- example.timer # Enabled (runs for the user)
+      disabled:
+        #- example.service # Disabled (does not run for the user, unless other unit strictly requires it)
+      masked:
+        #- example.service # Masked (does not run for the user, under any circumstances)
+      unmasked:
+        #- example.service # Unmasked (runs for the user, even if previously masked)
+
   - type: signing # this sets up the proper policy & signing files for signed images to work fully
 
 

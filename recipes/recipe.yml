@@ -170,6 +170,12 @@ modules:
         - net.codelogistics.webapps
         - com.quexten.Goldwarden
         - com.bitwarden.desktop
+        - org.telegram.desktop
+        - org.gnome.Boxes
+        - io.atom.Atom
+        - org.gnome.baobab
+        - net.nokyan.Resources
+        - com.github.tchx84.Flatseal
     user:
       # repo-name will overwrite the previously-configured repo-name for the user remote
       repo-name: flathub-user

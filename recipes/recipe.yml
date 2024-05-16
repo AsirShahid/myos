@@ -32,6 +32,7 @@ modules:
       - emacs
       - rclone
       - restic
+      - gnome-shell-extension-pop-shell
 
       # hyprland
       - hyprland

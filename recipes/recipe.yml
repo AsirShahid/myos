@@ -155,6 +155,7 @@ modules:
         - net.davidotek.pupgui2
         - org.ryujinx.Ryujinx
         - org.mozilla.firefox
+        - net.codelogistics.webapps
     user:
       # repo-name will overwrite the previously-configured repo-name for the user remote
       repo-name: flathub-user

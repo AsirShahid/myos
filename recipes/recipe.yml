@@ -58,6 +58,8 @@ modules:
       # sway
       - sway
       - sway-contrib
+      - waybar
+        sway-config-fedora
       - grim
       - grimshot
       - swaylock-effects

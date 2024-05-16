@@ -57,6 +57,11 @@ modules:
 
       # sway
       - sway
+      - sway-contrib
+      - grim
+      - grimshot
+      - swaylock-effects
+      - swaylock
 
       # audio
       - pavucontrol

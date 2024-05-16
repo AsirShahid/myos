@@ -176,6 +176,11 @@ modules:
         - org.gnome.baobab
         - net.nokyan.Resources
         - com.github.tchx84.Flatseal
+        - org.kde.okular
+        - com.discordapp.Discord
+        - io.gitlab.liferooter.TextPieces
+        - org.DolphinEmu.dolphin-emu
+        - flathub com.jeffser.Alpaca
     user:
       # repo-name will overwrite the previously-configured repo-name for the user remote
       repo-name: flathub-user

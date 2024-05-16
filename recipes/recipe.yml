@@ -1,3 +1,4 @@
+      - swaylock
 # image will be published to ghcr.io/<user>/<name>
 name: myos
 # description will be included in the image's metadata
@@ -66,6 +67,8 @@ modules:
 
       # audio
       - pavucontrol
+      - pulseaudio-utils
+      - libnotify
       - pipewire
       - playerctl
       - wireplumber
@@ -175,6 +178,7 @@ modules:
     scripts:
       - nix.sh
       - getbeeper.sh
+      - ags-deps.sh
 
   - type: fonts
     fonts:

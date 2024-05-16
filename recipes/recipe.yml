@@ -55,6 +55,16 @@ modules:
       - hyprcursor
       - xdg-desktop-portal-hyprland # desktop portal
 
+      # sway
+      - sway
+      - waybar
+      - sway-config-fedora
+      - sway-contrib
+      - grim
+      - grimshot
+      - swaylock-effects
+      - swaylock
+
       # audio
       - pavucontrol
       - pipewire

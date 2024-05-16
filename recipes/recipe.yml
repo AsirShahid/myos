@@ -179,6 +179,7 @@ modules:
         - org.kde.okular
         - com.discordapp.Discord
         - io.gitlab.liferooter.TextPieces
+        - io.github.flattool.Warehouse
         - org.DolphinEmu.dolphin-emu
         - flathub com.jeffser.Alpaca
     user:

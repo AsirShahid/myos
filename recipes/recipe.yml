@@ -61,7 +61,6 @@ modules:
       - grim
       - grimshot
       - swaylock-effects
-      - swaylock
 
       # audio
       - pavucontrol

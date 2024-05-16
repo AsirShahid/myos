@@ -32,19 +32,26 @@ modules:
       - xonsh
       - ranger
       - kitty
+      - alacritty
+      - ptyxis
       - emacs
       - rclone
       - restic
       - gnome-shell-extension-pop-shell
       - kdeconnectd
       - fastfetch
-      - ptyxis
+      - antimicrox
+      - lsd
+      - eza
+      - cliphist
 
       # hyprland
       - hyprland
       - hyprpaper # wallpaper util
       - hyprpicker # color picker
       - hyprshot # screenshot util
+      - pyprland
+      - hyprcursor
       - xdg-desktop-portal-hyprland # desktop portal
 
       # audio

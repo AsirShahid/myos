@@ -44,6 +44,7 @@ modules:
       - lsd
       - eza
       - cliphist
+      - cargo
 
       # hyprland
       - hyprland

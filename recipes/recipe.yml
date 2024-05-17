@@ -70,8 +70,8 @@ modules:
       - pulseaudio-utils
       - libnotify
       - pipewire
-      - playerctl
       - wireplumber
+      - pamixer
 
       # bluetooth
       - blueman
@@ -79,7 +79,6 @@ modules:
       # modern cli tools https://github.com/ibraheemdev/modern-unix
       - duf
       - eza
-      - fd-find
       - httpie
       - procs
       - tldr
@@ -94,25 +93,16 @@ modules:
       - NetworkManager-sstp-gnome
       - NetworkManager-vpnc-gnome
 
-      # qt
-      - qt5-qtwayland
-      - qt6-qtwayland
-
       # other
       - bolt
-      - brightnessctl
-      - dunst # notification daemon
       - fprintd-pam
       - gnome-keyring-pam
       - lxqt-policykit
       - nautilus
       - pinentry-gnome3
       - plymouth-system-theme
-      - rofi-wayland
       - sddm-wayland-generic # display manager
       - system-config-printer
-      - waybar
-      - wl-clipboard
 
       # ags
       - aylurs-gtk-shell
@@ -142,11 +132,6 @@ modules:
       - google-noto-emoji-fonts
       - gnome-disk-utility
       
-      # sound
-      - wireplumber
-      - pipewire
-      - pamixer
-
       # networking
       - network-manager-applet
       - NetworkManager-openvpn

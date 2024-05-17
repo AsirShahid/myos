@@ -55,6 +55,7 @@ modules:
       - pyprland
       - hyprcursor
       - xdg-desktop-portal-hyprland # desktop portal
+      - jq
 
       # sway
       - sway

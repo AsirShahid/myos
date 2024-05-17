@@ -22,7 +22,6 @@ modules:
       - https://copr.fedorainfracloud.org/coprs/solopasha/hyprland/repo/fedora-40/solopasha-hyprland-fedora-40.repo
       - https://copr.fedorainfracloud.org/coprs/g/copr/PyPI/repo/fedora-40/group_copr-PyPI-fedora-40.repo
       - https://copr.fedorainfracloud.org/coprs/ublue-os/staging/repo/fedora-40/ublue-os-staging-fedora-40.repo
-      - https://copr.fedorainfracloud.org/coprs/eyecantcu/AppImageLauncher/repo/fedora-40/eyecantcu-AppImageLauncher-fedora-40.repo
     install:
       - micro
       - starship
@@ -47,7 +46,6 @@ modules:
       - cliphist
       - cargo
       - zathura
-      - AppImageLauncher
 
       # hyprland
       - hyprland

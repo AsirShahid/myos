@@ -45,6 +45,7 @@ modules:
       - eza
       - cliphist
       - cargo
+      - zathura
 
       # hyprland
       - hyprland

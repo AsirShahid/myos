@@ -110,6 +110,7 @@ modules:
       - swappy
       - swww
       - fd-find
+        wf-recorder
 
       # launcher
       - rofi-wayland

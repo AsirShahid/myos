@@ -51,6 +51,7 @@ modules:
       - power-profiles-daemon
       - libgda 
       - libgda-sqlite
+      - zlib-devel
 
       # hyprland
       - hyprland-git

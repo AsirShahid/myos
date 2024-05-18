@@ -212,7 +212,7 @@ modules:
       # Otherwise, it will overwrite the repo configuration.
       install:
         - org.kde.kdenlive # this Flatpak is appended to the insta llist
-          #- com.valvesoftware.Steam
+        - com.valvesoftware.Steam
         - com.steamgriddb.steam-rom-manager
         - org.gnome.World.PikaBackup
         - com.jetbrains.PyCharm-Community
@@ -245,6 +245,7 @@ modules:
         - com.jeffser.Alpaca
         - im.riot.Riot
         - com.stremio.Stremio
+        - com.github.GradienceTeam.Gradience
 
     user:
       # repo-name will overwrite the previously-configured repo-name for the user remote

@@ -59,6 +59,12 @@ modules:
       - freetype-devel
       - lcms2-devel
       - libwebp-devel
+      - wireplumber-devel
+      - libdbusmenu-gtk3-devel
+      - playerctl-devel
+      - gtk-layer-shell-devel
+      - upower-devel
+      - upower
 
       ### Basic utilities
       - axel
@@ -73,7 +79,6 @@ modules:
       - meson
       - typescript
       - gjs
-      - xdg-user-dirs
 
       ### Make dependencies for MicroTeX
       - tinyxml2
@@ -97,7 +102,7 @@ modules:
       # sway
       - sway
       - sway-contrib
-      - waybar
+      - waybar-git
         sway-config-fedora
       - grim
       - grimshot
@@ -143,7 +148,7 @@ modules:
       - system-config-printer
 
       # ags
-      - aylurs-gtk-shell
+      - aylurs-gtk-shell-git
       - fzf
       - swappy
       - swww
@@ -170,6 +175,7 @@ modules:
       - vulkan-tools
       - google-noto-emoji-fonts
       - gnome-disk-utility
+      - xdg-desktop-portal-gtk
       
       # networking
       - network-manager-applet

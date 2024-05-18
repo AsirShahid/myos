@@ -51,7 +51,7 @@ modules:
       - power-profiles-daemon
 
       # hyprland
-      - hyprland
+      - hyprland-git
       - hyprpaper # wallpaper util
       - hyprpicker # color picker
       - hyprshot # screenshot util

@@ -1,14 +1,10 @@
 # vim: set ft=make :
 
-alias upgrade := update
-
 # Update system, flatpaks, and containers all at once
 update:
     #!/usr/bin/bash
     ublue-update --wait
     /usr/bin/topgrade --config /usr/share/ublue-os/topgrade.toml --keep
-
-alias auto-update := toggle-updates
 
 # Turn automatic updates on or off
 toggle-updates ACTION="prompt":
@@ -35,8 +31,6 @@ toggle-updates ACTION="prompt":
     elif [ "${OPTION,,}" == "disable" ]; then
       sudo systemctl disable ublue-update.timer
     fi
-
-alias changelog := changelogs
 
 # Show the changelog
 changelogs:
@@ -366,7 +360,6 @@ install-coolercontrol:
     cp /usr/share/applications/org.coolercontrol.CoolerControl.desktop $HOME/.config/autostart/org.coolercontrol.CoolerControl.desktop
     echo 'Complete.'
 
-alias get-steamcmd := install-steamcmd
 
 # Install SteamCMD (https://developer.valvesoftware.com/wiki/SteamCMD)
 install-steamcmd:
@@ -386,8 +379,6 @@ install-openrazer:
     ; fi && \
     sudo usermod -a -G plugdev $USER && \
     echo "Please reboot to apply needed changes."
-
-alias get-wootility := install-wootility
 
 # Install Wootility for configuring Wooting Keyboards
 install-wootility:
@@ -665,8 +656,6 @@ setup-sunshine ACTION="":
         systemctl disable --user --now sunshine.service 
       fi
     fi
-
-alias configure-waydroid := setup-waydroid
 
 # Launch Waydroid configuration helper
 setup-waydroid ACTION="":
@@ -1176,14 +1165,10 @@ setup-virtualization ACTION="":
 # fix-       = apply fix/patch/workaround for something
 # foo        = no verb is used for shortcuts or something deemed important enough to use a super memorable name
 
-alias brew-fleek := install-brew-fleek
-
 # Install "fleek" set of packages for brew | none, low, default, high
 install-brew-fleek level="high":
     #!/usr/bin/env bash
     curl --proto '=https' --tlsv1.2 -sSf -L https://brew.getfleek.dev/s/fleek | bash -s -- {{ level }}
-
-alias cockpit := setup-cockpit
 
 # Enable Cockpit for web-based system management | https://cockpit-project.org/
 setup-cockpit ACTION="":
@@ -1233,8 +1218,6 @@ setup-cockpit ACTION="":
       echo "Cockpit has been ${b}${red}disabled${n}"
     fi
 
-alias jetbrains-toolbox := install-jetbrains-toolbox
-
 # Install JetBrains Toolbox | https://www.jetbrains.com/toolbox-app/
 install-jetbrains-toolbox:
     #!/usr/bin/env bash
@@ -1252,8 +1235,6 @@ install-jetbrains-toolbox:
     tar zxf jetbrains-toolbox-"${BUILD_VERSION}".tar.gz
     echo "Launching JetBrains Toolbox"
     ./jetbrains-toolbox-"${BUILD_VERSION}"/jetbrains-toolbox
-
-alias atuin := install-atuin
 
 # Add atuin
 install-atuin:
@@ -1368,8 +1349,6 @@ devmode:
         fi
     fi
 
-alias shell := configure-shell
-
 # Switch to a different shell
 configure-shell ACTION="":
     #!/bin/bash
@@ -1395,16 +1374,12 @@ configure-shell ACTION="":
       printf "${USER}'s shell is now %s.\n" "$(cat /etc/passwd | grep ":$UID:" | cut '-d:' '-f7')"
     fi
 
-alias gnome-extensions := get-gnome-extensions
-
 # Install recommended GNOME extensions
 get-gnome-extensions:
     pip install --upgrade gnome-extensions-cli
     gext install nightthemeswitcher@romainvigier.fr
     gext install pano@elhan.io
     gext install weatheroclock@CleoMenezesJr.github.io
-
-alias gnome-vrr := toggle-gnome-vrr
 
 # Enable or Disable Gnome-VRR
 toggle-gnome-vrr:

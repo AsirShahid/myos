@@ -11,3 +11,4 @@ echo 'Scripts here will run during build if specified in recipe.yml'
 sudo npm -g install bun
 sudo npm -g install sass
 cargo install matugen
+pip3 install materialyoucolor --upgrade

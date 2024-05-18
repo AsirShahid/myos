@@ -301,7 +301,8 @@ modules:
   - type: systemd
     system:
       enabled:
-        nix-daemon.service
+        - nix-daemon.service
+        - power-profiles-daemon.service
         #- example.service # Enabled (runs on system boot)
       disabled:
         #- example.target # Disabled (does not run on system boot, unless other unit strictly requires it)

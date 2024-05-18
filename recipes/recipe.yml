@@ -49,6 +49,8 @@ modules:
       - cargo
       - zathura
       - power-profiles-daemon
+      - libgda 
+      - libgda-sqlite
 
       # hyprland
       - hyprland-git

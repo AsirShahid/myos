@@ -26,6 +26,8 @@ modules:
       - micro
       - starship
       - neovim
+      - helix
+      - kakoune
       - ncdu
       - zsh
       - fish

@@ -252,6 +252,7 @@ modules:
       - nix.sh
       - getbeeper.sh
       - ags-deps.sh
+      - git.sh
 
   - type: fonts
     fonts:

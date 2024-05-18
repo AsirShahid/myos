@@ -264,6 +264,7 @@ modules:
       - Terminus
       - JetBrainsMono
       - NerdFontsSymbolsOnly
+      - Meslo
     google-fonts:
       - Roboto
       - Open Sans

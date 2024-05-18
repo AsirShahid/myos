@@ -1,0 +1,9 @@
+[Desktop Entry]
+Type=Application
+Name=Beeper
+Comment=Beeper: Unified Messenger
+Exec=/usr/bin/beeper --no-sandbox %U
+Icon=/usr/share/icons/beeper.png
+Terminal=false
+Categories=Network;Chat;
+StartupWMClass=Beeper

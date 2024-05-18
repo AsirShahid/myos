@@ -54,6 +54,11 @@ modules:
       - zlib-devel
       - libjpeg-turbo-devel
       - python3-devel
+      - libpng-devel
+      - libtiff-devel
+      - freetype-devel
+      - lcms2-devel
+      - libwebp-devel
 
       # hyprland
       - hyprland-git

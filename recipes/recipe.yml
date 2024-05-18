@@ -52,6 +52,7 @@ modules:
       - libgda 
       - libgda-sqlite
       - zlib-devel
+      - libjpeg-turbo-devel
 
       # hyprland
       - hyprland-git

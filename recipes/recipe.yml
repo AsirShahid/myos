@@ -46,6 +46,7 @@ modules:
       - cliphist
       - cargo
       - zathura
+      - power-profiles-daemon
 
       # hyprland
       - hyprland

@@ -242,6 +242,7 @@ modules:
         - org.DolphinEmu.dolphin-emu
         - com.jeffser.Alpaca
         - im.riot.Riot
+        - com.stremio.Stremio
 
     user:
       # repo-name will overwrite the previously-configured repo-name for the user remote

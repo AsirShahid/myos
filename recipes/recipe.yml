@@ -255,6 +255,7 @@ modules:
       - getbeeper.sh
       - ags-deps.sh
       - git.sh
+      - enablepop.sh
 
   - type: fonts
     fonts:

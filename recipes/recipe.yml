@@ -60,6 +60,30 @@ modules:
       - lcms2-devel
       - libwebp-devel
 
+      ### Basic utilities
+      - axel
+      - coreutils
+      - cliphist
+      - cmake
+      - curl
+      - fuzzel
+      - rsync
+      - ripgrep
+      - gojq
+      - meson
+      - typescript
+      - gjs
+      - xdg-user-dirs
+
+      ### Make dependencies for MicroTeX
+      - tinyxml2
+      - gtkmm2.4-devel
+      - gtkmm3.0-devel
+      - gtkmm4.0-devel
+      - gtksourceviewmm
+      - cairomm
+
+
       # hyprland
       - hyprland-git
       - hyprpaper # wallpaper util

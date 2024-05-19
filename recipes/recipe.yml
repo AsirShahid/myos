@@ -300,6 +300,7 @@ modules:
       - ags-deps.sh
       - git.sh
       - enablepop.sh
+      - post-install.sh
 
   - type: fonts
     fonts:

@@ -47,6 +47,7 @@ modules:
       - eza
       - cliphist
       - cargo
+      - openssl-devel
       - zathura
       - power-profiles-daemon
       - libgda 

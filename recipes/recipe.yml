@@ -66,6 +66,7 @@ modules:
       - gtk-layer-shell-devel
       - upower-devel
       - upower
+      - steam
 
       ### Basic utilities
       - axel
@@ -253,7 +254,6 @@ modules:
       # Otherwise, it will overwrite the repo configuration.
       install:
         - org.kde.kdenlive # this Flatpak is appended to the insta llist
-        #- com.valvesoftware.Steam
         #- com.steamgriddb.steam-rom-manager
         - org.gnome.World.PikaBackup
         - com.jetbrains.PyCharm-Community

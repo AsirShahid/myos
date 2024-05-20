@@ -318,6 +318,7 @@ modules:
       - Meslo
       - Iosevka
       - IosevkaTerm
+      - Inconsolata
     google-fonts:
       - Roboto
       - Open Sans

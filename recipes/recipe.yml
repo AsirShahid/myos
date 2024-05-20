@@ -289,6 +289,8 @@ modules:
         - im.riot.Riot
         - com.stremio.Stremio
         - com.github.GradienceTeam.Gradience
+        - us.zoom.Zoom
+        - org.gnome.Fractal
 
     user:
       # repo-name will overwrite the previously-configured repo-name for the user remote

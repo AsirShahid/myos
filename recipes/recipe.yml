@@ -299,7 +299,7 @@ modules:
 
   - type: script
     scripts:
-      - nix.sh
+      #- nix.sh
       - getbeeper.sh
       - ags-deps.sh
       - git.sh
@@ -316,6 +316,8 @@ modules:
       - JetBrainsMono
       - NerdFontsSymbolsOnly
       - Meslo
+      - Iosevka
+      - IosevkaTerm
     google-fonts:
       - Roboto
       - Open Sans

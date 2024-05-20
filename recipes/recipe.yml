@@ -308,20 +308,20 @@ modules:
 
   - type: fonts
     fonts:
-    nerd-fonts:
-      - FiraCode # don't add spaces or "Nerd Font" suffix.
-      - Hack
-      - SourceCodePro
-      - Terminus
-      - JetBrainsMono
-      - NerdFontsSymbolsOnly
-      - Meslo
-      - Iosevka
-      - IosevkaTerm
-      - Inconsolata
-    google-fonts:
-      - Roboto
-      - Open Sans
+      nerd-fonts:
+        - FiraCode # don't add spaces or "Nerd Font" suffix.
+        - Hack
+        - SourceCodePro
+        - Terminus
+        - JetBrainsMono
+        - NerdFontsSymbolsOnly
+        - Meslo
+        - Iosevka
+        - IosevkaTerm
+        - Inconsolata
+      google-fonts:
+        - Roboto
+        - Open Sans
 
   - type: bling
     install:

@@ -356,7 +356,7 @@ modules:
     install:
       - framework-laptop
       - zenergy
-      - gcadapter_oc
+      #- gcadapter_oc
 
   - type: systemd
     system:

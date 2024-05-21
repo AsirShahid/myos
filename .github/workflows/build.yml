@@ -12,7 +12,7 @@ on:
 jobs:
   bluebuild:
     name: Build Custom Image
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
     permissions:
       contents: read
       packages: write

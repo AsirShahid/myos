@@ -355,6 +355,7 @@ modules:
     base: main # if not specified, classic "main" base is used by default
     install:
       - framework-laptop
+      - ryzen-smu
       - zenergy
       #- gcadapter_oc
 

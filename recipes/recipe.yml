@@ -291,6 +291,7 @@ modules:
         - com.github.GradienceTeam.Gradience
         - org.gnome.Fractal
         - com.ticktick.TickTick
+        - org.libreoffice.LibreOffice
 
     user:
       # repo-name will overwrite the previously-configured repo-name for the user remote

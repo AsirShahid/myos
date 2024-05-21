@@ -356,7 +356,6 @@ modules:
       - framework-laptop
       - zenergy
       - gcadapter_oc
-      - winesync
 
   - type: systemd
     system:

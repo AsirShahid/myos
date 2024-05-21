@@ -292,6 +292,9 @@ modules:
         - org.gnome.Fractal
         - com.ticktick.TickTick
         - org.libreoffice.LibreOffice
+        - com.gopeed.Gopeed
+        - org.qbittorrent.qBittorrent
+        - org.chromium.Chromium
 
     user:
       # repo-name will overwrite the previously-configured repo-name for the user remote

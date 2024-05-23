@@ -224,6 +224,12 @@ modules:
       - breeze-icon-theme 
       - papirus-icon-theme
 
+      # River
+      - river
+      - waybar
+      - xdg-desktop-portal-wlr
+      - xdg-desktop-portal-gtk
+
     remove:
       # example: removing firefox (in favor of the flatpak)
       # "firefox" is the main package, "firefox-langpacks" is a dependency

@@ -230,11 +230,11 @@ modules:
       - xdg-desktop-portal-gtk
 
       # Docker
-      - docker-buildx-plugin
-      - docker-ce
-      - docker-ce-cli
-      - docker-ce-rootless-extras
-      - docker-compose-plugin
+      #- docker-buildx-plugin
+      #- docker-ce
+      #- docker-ce-cli
+      #- docker-ce-rootless-extras
+      #- docker-compose-plugin
 
     remove:
       # example: removing firefox (in favor of the flatpak)

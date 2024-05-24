@@ -1721,3 +1721,17 @@ ollama-web: ollama
     fi
     systemctl --user daemon-reload
     systemctl --user start ollama-web.service
+
+# Run pytorch
+ags-deps:
+    sudo npm -g install bun
+    sudo npm -g install sass
+    brew install sass/sass/sass
+    cargo install matugen
+    pip3 install materialyoucolor --upgrade
+    pip3 install material-color-utilities-python --upgrade
+    pip3 install build --upgrade
+    pip3 install pillow --upgrade
+    pip3 install pywal --upgrade
+    pip3 install wheel --upgrade
+    pip3 install setuptools-scm --upgrade

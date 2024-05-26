@@ -24,6 +24,7 @@ modules:
       - https://copr.fedorainfracloud.org/coprs/ublue-os/staging/repo/fedora-40/ublue-os-staging-fedora-40.repo
       - https://copr.fedorainfracloud.org/coprs/kylegospo/bazzite-multilib/repo/fedora-40/kylegospo-bazzite-multilib-fedora-40.repo?arch=x86_64
       - https://copr.fedorainfracloud.org/coprs/kylegospo/bazzite/repo/fedora-40/kylegospo-bazzite-fedora-40.repo
+      - https://copr.fedorainfracloud.org/coprs/ryanabx/cosmic-epoch/repo/fedora-40/ryanabx-cosmic-epoch-fedora-40.repo
     install:
       - micro
       - starship
@@ -238,6 +239,10 @@ modules:
       #- docker-ce-cli
       #- docker-ce-rootless-extras
       #- docker-compose-plugin
+
+      # Cosmic
+      - cosmic-desktop
+      - tuned
 
     remove:
       # example: removing firefox (in favor of the flatpak)

@@ -83,6 +83,9 @@ modules:
       - meson
       - typescript
       - gjs
+      - libtool
+      - libtool-ltdl
+      - libtool-ltdl-devel
 
       ### Make dependencies for MicroTeX
       - tinyxml2

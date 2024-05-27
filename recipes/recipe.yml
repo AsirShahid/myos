@@ -344,6 +344,7 @@ modules:
         - Iosevka
         - IosevkaTerm
         - Inconsolata
+        - Noto
       google-fonts:
         - Roboto
         - Open Sans

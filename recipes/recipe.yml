@@ -340,7 +340,6 @@ modules:
         - Terminus
         - JetBrainsMono
         - NerdFontsSymbolsOnly
-        - Symbols
         - Meslo
         - Iosevka
         - IosevkaTerm

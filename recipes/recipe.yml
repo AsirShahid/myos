@@ -342,11 +342,11 @@ modules:
         - Terminus
         - JetBrainsMono
         - NerdFontsSymbolsOnly
-        - Symbols
         - Meslo
         - Iosevka
         - IosevkaTerm
         - Inconsolata
+        - Noto
       google-fonts:
         - Roboto
         - Open Sans

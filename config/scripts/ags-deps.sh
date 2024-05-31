@@ -14,7 +14,7 @@ cargo install matugen
 pip3 install materialyoucolor --upgrade
 pip3 install material-color-utilities-python --upgrade
 pip3 install build --upgrade
-pip3 install pillow --upgrade
+pip3 install 'pillow<10.0.0,>=9.2.0' --upgrade
 pip3 install pywal --upgrade
 pip3 install wheel --upgrade
 pip3 install setuptools-scm --upgrade

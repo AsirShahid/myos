@@ -108,6 +108,7 @@ modules:
       - hyprcursor
       - xdg-desktop-portal-hyprland # desktop portal
       - jq
+      - waypipe
 
       # sway
       - sway

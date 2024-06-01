@@ -292,8 +292,8 @@ install-system-flatpaks:
     flatpak --system -y install --or-update ${FLATPAK_LIST}
 
 # Configure grub bootmenu visibility
-configure-grub:
-    /usr/libexec/configure-grub.sh
+#configure-grub:
+#    /usr/libexec/configure-grub.sh
 
 update-ng:
     echo "Note: This command doesn't work if you have locally layered packages" 

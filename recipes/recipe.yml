@@ -43,6 +43,7 @@ modules:
       - emacs
       - rclone
       - restic
+      - timeshift
       - gnome-shell-extension-pop-shell
       - kdeconnectd
       - fastfetch

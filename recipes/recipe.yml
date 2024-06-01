@@ -396,7 +396,7 @@ modules:
       - Pano - Clipboard Manager
       - Weather O'Clock
       - Pop Shell
-    uninstall:
+    #uninstall:
       #- GSConnect # Uninstall step here should be used only for the extensions
                       # which are not installed through OS package manager in the base image,
                       # like extensions installed from gnome-extensions module

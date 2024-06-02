@@ -396,6 +396,7 @@ modules:
       - Bluetooth Battery Meter
       - Pano - Clipboard Manager
       - Caffeine
+      - OpenWeather Refined
       #- "Weather O'Clock"
       #- Pop Shell
     #uninstall:

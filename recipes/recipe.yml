@@ -395,6 +395,7 @@ modules:
                           # Name is case-sensitive, so check if extension name is typed correctly
       - Bluetooth Battery Meter
       - Pano - Clipboard Manager
+      - Caffeine
       #- "Weather O'Clock"
       #- Pop Shell
     #uninstall:

@@ -143,6 +143,7 @@ modules:
 
       # ags
       - aylurs-gtk-shell-git
+      - cargo
       - fzf
       - swappy
       - swww

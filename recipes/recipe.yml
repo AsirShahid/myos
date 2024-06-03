@@ -257,7 +257,6 @@ modules:
       - procs
       - p7zip
       - unrar
-      - texlive
 
     # Auto-update Brew binary
     auto-update: true # Optional - Default: true - Expects type: boolean

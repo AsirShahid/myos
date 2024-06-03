@@ -406,6 +406,8 @@ modules:
                       # which are not installed through OS package manager in the base image,
                       # like extensions installed from gnome-extensions module
   - type: brew
+    packages:
+      - ollama
     # Auto-update Brew binary
     auto-update: true # Optional - Default: true - Expects type: boolean
     # Interval between Brew updates

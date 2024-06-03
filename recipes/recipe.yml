@@ -27,12 +27,8 @@ modules:
       - https://copr.fedorainfracloud.org/coprs/ryanabx/cosmic-epoch/repo/fedora-40/ryanabx-cosmic-epoch-fedora-40.repo
       - https://copr.fedorainfracloud.org/coprs/peterwu/rendezvous/repo/fedora-40/peterwu-rendezvous-fedora-40.repo
     install:
-      - micro
       - starship
-      - neovim
       - helix
-      - kakoune
-      - ncdu
       - zsh
       - fish
       - xonsh
@@ -41,17 +37,11 @@ modules:
       - alacritty
       - ptyxis
       - emacs
-      - rclone
-      - restic
       - timeshift
       - gnome-shell-extension-pop-shell
       - kdeconnectd
-      - fastfetch
       - antimicrox
-      - lsd
-      - eza
       - cliphist
-      - cargo
       - openssl-devel
       - zathura
       - power-profiles-daemon
@@ -81,8 +71,6 @@ modules:
       - cmake
       - curl
       - fuzzel
-      - rsync
-      - ripgrep
       - gojq
       - meson
       - typescript
@@ -133,10 +121,8 @@ modules:
 
       # modern cli tools https://github.com/ibraheemdev/modern-unix
       - duf
-      - eza
       - httpie
       - procs
-      - tldr
 
       # network
       - network-manager-applet
@@ -408,6 +394,20 @@ modules:
   - type: brew
     packages:
       - ollama
+      - restic
+      - rclone
+      - autorestic
+      - rust
+      - lsd
+      - eza
+      - neovim
+      - kakoune
+      - micro
+      - fastfetch
+      - rsync
+      - ripgrep
+      - tldr
+
     # Auto-update Brew binary
     auto-update: true # Optional - Default: true - Expects type: boolean
     # Interval between Brew updates

@@ -258,9 +258,6 @@ modules:
       - p7zip
       - unrar
       - texlive
-      - docker
-      - docker-completion
-      - docker-compose
 
     # Auto-update Brew binary
     auto-update: true # Optional - Default: true - Expects type: boolean

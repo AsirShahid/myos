@@ -61,11 +61,8 @@ modules:
       #- steam
 
       ### Basic utilities
-      - axel
       - coreutils
       - cliphist
-      - cmake
-      - curl
       - fuzzel
       - gojq
       - meson
@@ -114,11 +111,6 @@ modules:
 
       # bluetooth
       - blueman
-
-      # modern cli tools https://github.com/ibraheemdev/modern-unix
-      - duf
-      - httpie
-      - procs
 
       # network
       - network-manager-applet
@@ -258,6 +250,14 @@ modules:
       - xonsh
       - ranger
       - lazygit
+      - atuin
+      - axel
+      - cmake
+      - curl
+      - duf
+      - httpie
+      - procs
+
 
     # Auto-update Brew binary
     auto-update: true # Optional - Default: true - Expects type: boolean

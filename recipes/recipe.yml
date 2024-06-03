@@ -29,10 +29,6 @@ modules:
     install:
       - starship
       - helix
-      - zsh
-      - fish
-      - xonsh
-      - ranger
       - kitty
       - alacritty
       - ptyxis
@@ -256,6 +252,10 @@ modules:
       - rsync
       - ripgrep
       - tldr
+      - zsh
+      - fish
+      - xonsh
+      - ranger
 
     # Auto-update Brew binary
     auto-update: true # Optional - Default: true - Expects type: boolean

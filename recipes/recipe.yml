@@ -178,8 +178,6 @@ modules:
       - thunar-volman
       - xarchiver
       - imv
-      - p7zip
-      - unrar-free
 
       # screenshot
       - slurp
@@ -257,7 +255,9 @@ modules:
       - duf
       - httpie
       - procs
-
+      - p7zip
+      - unrar
+      - texlive
 
     # Auto-update Brew binary
     auto-update: true # Optional - Default: true - Expects type: boolean

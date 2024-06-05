@@ -344,6 +344,7 @@ modules:
         - com.gopeed.Gopeed
         - org.qbittorrent.qBittorrent
         - org.chromium.Chromium
+        - com.github.wwmm.easyeffects
 
     user:
       # repo-name will overwrite the previously-configured repo-name for the user remote

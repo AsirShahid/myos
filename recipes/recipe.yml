@@ -247,6 +247,7 @@ modules:
       - fish
       - xonsh
       - ranger
+      - ncdu
       - lazygit
       - atuin
       - axel

@@ -262,6 +262,11 @@ modules:
       - docker-completion
       - docker-compose
 
+      # Tops
+      - nvtop
+      - htop
+      - bpytop
+
     # Auto-update Brew binary
     auto-update: true # Optional - Default: true - Expects type: boolean
     # Interval between Brew updates

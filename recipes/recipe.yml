@@ -4,7 +4,7 @@ name: myos
 description: This is my personal OS image.
 
 # the base image to build on top of (FROM) and the version tag to use
-base-image: ghcr.io/ublue-os/aurora-dx
+base-image: ghcr.io/ublue-os/bluefin-dx
 image-version: 40 # latest is also supported if you want new updates ASAP
 
 # module configuration, executed in order
@@ -26,6 +26,7 @@ modules:
       - https://copr.fedorainfracloud.org/coprs/kylegospo/bazzite/repo/fedora-40/kylegospo-bazzite-fedora-40.repo
       - https://copr.fedorainfracloud.org/coprs/ryanabx/cosmic-epoch/repo/fedora-40/ryanabx-cosmic-epoch-fedora-40.repo
       - https://copr.fedorainfracloud.org/coprs/peterwu/rendezvous/repo/fedora-40/peterwu-rendezvous-fedora-40.repo
+      - https://copr.fedorainfracloud.org/coprs/yuezk/globalprotect-openconnect/repo/fedora-40/yuezk-globalprotect-openconnect-fedora-40.repo
     install:
       - starship
       - helix
@@ -130,7 +131,7 @@ modules:
       - nautilus
       - pinentry-gnome3
       - plymouth-system-theme
-#      - sddm-wayland-generic # display manager
+      - sddm-wayland-generic # display manager
       - system-config-printer
 
       # ags
@@ -221,6 +222,7 @@ modules:
       - cosmic-desktop
       - tuned
 
+      - globalprotect-openconnect
     remove:
       # example: removing firefox (in favor of the flatpak)
       # "firefox" is the main package, "firefox-langpacks" is a dependency

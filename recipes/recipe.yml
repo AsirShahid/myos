@@ -231,47 +231,47 @@ modules:
       #- firefox-langpacks # also remove firefox dependency (not required for all packages, this is a special case)
 
   - type: brew
-    packages:
-      - ollama
-      - restic
-      - rclone
-      - autorestic
-      - rust
-      - lsd
-      - eza
-      - neovim
-      - kakoune
-      - micro
-      - fastfetch
-      - rsync
-      - ripgrep
-      - tldr
-      - zsh
-      - fish
-      - xonsh
-      - ranger
-      - ncdu
-      - lazygit
-      - atuin
-      - axel
-      - cmake
-      - curl
-      - duf
-      - httpie
-      - procs
-      - p7zip
-      - unrar
-      - texlive
-      - docker
-      - docker-completion
-      - docker-compose
+    # packages:
+    #   - ollama
+    #   - restic
+    #   - rclone
+    #   - autorestic
+    #   - rust
+    #   - lsd
+    #   - eza
+    #   - neovim
+    #   - kakoune
+    #   - micro
+    #   - fastfetch
+    #   - rsync
+    #   - ripgrep
+    #   - tldr
+    #   - zsh
+    #   - fish
+    #   - xonsh
+    #   - ranger
+    #   - ncdu
+    #   - lazygit
+    #   - atuin
+    #   - axel
+    #   - cmake
+    #   - curl
+    #   - duf
+    #   - httpie
+    #   - procs
+    #   - p7zip
+    #   - unrar
+    #   - texlive
+    #   - docker
+    #   - docker-completion
+    #   - docker-compose
 
-      # Tops
-      - nvtop
-      - htop
-      - bpytop
+    #   # Tops
+    #   - nvtop
+    #   - htop
+    #   - bpytop
 
-    # Auto-update Brew binary
+    # # Auto-update Brew binary
     auto-update: true # Optional - Default: true - Expects type: boolean
     # Interval between Brew updates
     update-interval: '6h' # Optional - Default: '6h' - Expects type: string

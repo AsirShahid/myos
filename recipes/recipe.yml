@@ -36,6 +36,7 @@ modules:
       - emacs
       - timeshift
       - gnome-shell-extension-pop-shell
+      - gnome-boxes
       - kdeconnectd
       - antimicrox
       - cliphist
@@ -333,7 +334,6 @@ modules:
         - com.bitwarden.desktop
         - org.telegram.desktop
         - com.slack.Slack
-        - org.gnome.Boxes
         - io.atom.Atom
         - org.gnome.baobab
         - net.nokyan.Resources

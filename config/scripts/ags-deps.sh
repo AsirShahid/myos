@@ -8,7 +8,8 @@ set -oue pipefail
 # Your code goes here.
 echo 'This is an example shell script'
 echo 'Scripts here will run during build if specified in recipe.yml'
-sudo npm -g install bun
+#sudo npm -g install bun
+curl -fsSL https://bun.sh/install | bash
 sudo npm -g install sass
 cargo install matugen
 pip3 install materialyoucolor --upgrade

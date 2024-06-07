@@ -434,6 +434,7 @@ modules:
       #- Pano - Clipboard Manager
       - Caffeine
       - OpenWeather Refined
+      - Clipboard Indicator
       #- "Weather O'Clock"
       #- Pop Shell
     #uninstall:

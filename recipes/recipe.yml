@@ -26,6 +26,7 @@ modules:
       - https://copr.fedorainfracloud.org/coprs/kylegospo/bazzite/repo/fedora-40/kylegospo-bazzite-fedora-40.repo
       - https://copr.fedorainfracloud.org/coprs/ryanabx/cosmic-epoch/repo/fedora-40/ryanabx-cosmic-epoch-fedora-40.repo
       - https://copr.fedorainfracloud.org/coprs/peterwu/rendezvous/repo/fedora-40/peterwu-rendezvous-fedora-40.repo
+      - https://copr.fedorainfracloud.org/coprs/yuezk/globalprotect-openconnect/repo/fedora-40/yuezk-globalprotect-openconnect-fedora-40.repo
     install:
       - starship
       - helix
@@ -221,6 +222,7 @@ modules:
       - cosmic-desktop
       - tuned
 
+      - globalprotect-openconnect
     remove:
       # example: removing firefox (in favor of the flatpak)
       # "firefox" is the main package, "firefox-langpacks" is a dependency

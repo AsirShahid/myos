@@ -366,7 +366,7 @@ modules:
       #- nix.sh
       - getbeeper.sh
       - getsimplex.sh
-      - ags-deps.sh
+      #- ags-deps.sh
       - git.sh
       - enablepop.sh
       - post-install.sh

@@ -423,9 +423,9 @@ modules:
 #       - framework-laptop
 #       - ryzen-smu
 #       - zenergy
-    - type: gschema-overrides
-      include:
-        - zz1-myoverride.gschema.override # test & compile the override file included in config/gschema-overrides/zz1-myoverride.gschema.override     #- gcadapter_oc
+  - type: gschema-overrides
+    include:
+      - zz1-myoverride.gschema.override # test & compile the override file included in config/gschema-overrides/zz1-myoverride.gschema.override     #- gcadapter_oc
 
   - type: gnome-extensions
     install:

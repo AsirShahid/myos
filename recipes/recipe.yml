@@ -28,8 +28,6 @@ modules:
       - https://copr.fedorainfracloud.org/coprs/peterwu/rendezvous/repo/fedora-40/peterwu-rendezvous-fedora-40.repo
       - https://copr.fedorainfracloud.org/coprs/yuezk/globalprotect-openconnect/repo/fedora-40/yuezk-globalprotect-openconnect-fedora-40.repo
     install:
-      - steam
-
       - starship
       - helix
       - kitty

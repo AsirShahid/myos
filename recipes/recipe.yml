@@ -220,6 +220,9 @@ modules:
       #- docker-ce-rootless-extras
       #- docker-compose-plugin
 
+      # Framework updater
+      - fwupd
+
       # Cosmic
       - cosmic-desktop
       - tuned

@@ -322,7 +322,6 @@ modules:
         #- com.steamgriddb.steam-rom-manager
         - org.gnome.World.PikaBackup
         - com.jetbrains.PyCharm-Community
-        - com.visualstudio.code
         - com.mattjakeman.ExtensionManager
         - org.wezfurlong.wezterm
         - md.obsidian.Obsidian

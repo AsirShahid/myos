@@ -440,7 +440,7 @@ modules:
       #- Pano - Clipboard Manager
       - Caffeine
       - OpenWeather Refined
-      - PaperWM
+      #- PaperWM
       # Clipboard Indicator
       - 779
       #- "Weather O'Clock"

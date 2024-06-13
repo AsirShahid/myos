@@ -1380,6 +1380,7 @@ get-gnome-extensions:
     gext install nightthemeswitcher@romainvigier.fr
     gext install pano@elhan.io
     gext install weatheroclock@CleoMenezesJr.github.io
+    gext install paperwm@paperwm.github.com
 
 # Enable or Disable Gnome-VRR
 toggle-gnome-vrr:

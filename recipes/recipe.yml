@@ -117,14 +117,14 @@ modules:
       - blueman
 
       # network
-      - network-manager-applet
-      - NetworkManager-l2tp-gnome
-      - NetworkManager-libreswan-gnome
-      - NetworkManager-openconnect-gnome
-      - NetworkManager-openvpn-gnome
-      - NetworkManager-pptp-gnome
-      - NetworkManager-sstp-gnome
-      - NetworkManager-vpnc-gnome
+      # - network-manager-applet
+      # - NetworkManager-l2tp-gnome
+      # - NetworkManager-libreswan-gnome
+      # - NetworkManager-openconnect-gnome
+      # - NetworkManager-openvpn-gnome
+      # - NetworkManager-pptp-gnome
+      # - NetworkManager-sstp-gnome
+      # - NetworkManager-vpnc-gnome
 
       # other
       - bolt

@@ -9,5 +9,6 @@ set -oue pipefail
 echo 'This is an example shell script'
 echo 'Scripts here will run during build if specified in recipe.yml'
 flatpak override --user --talk-name=org.freedesktop.secrets net.ankiweb.Anki
+flatpak override --user --socket=wayland md.obsidian.Obsidian
 gsettings set org.gnome.desktop.interface color-scheme 'prefer-dark'
 gsettings set org.gnome.desktop.interface icon-theme "Adwaita"

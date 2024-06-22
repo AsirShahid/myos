@@ -225,8 +225,8 @@ modules:
       - fwupd
 
       # Cosmic
-      - cosmic-desktop
-      - tuned
+      #- cosmic-desktop
+      #- tuned
 
       - globalprotect-openconnect
       - awesome
@@ -237,7 +237,6 @@ modules:
       # "firefox" is the main package, "firefox-langpacks" is a dependency
       #- firefox
       - xterm
-      - cosmic
       #- firefox-langpacks # also remove firefox dependency (not required for all packages, this is a special case)
 
   - type: brew

@@ -236,6 +236,8 @@ modules:
       # example: removing firefox (in favor of the flatpak)
       # "firefox" is the main package, "firefox-langpacks" is a dependency
       #- firefox
+      - xterm
+      - cosmic
       #- firefox-langpacks # also remove firefox dependency (not required for all packages, this is a special case)
 
   - type: brew
@@ -327,7 +329,6 @@ modules:
         - org.gnome.World.PikaBackup
         - com.jetbrains.PyCharm-Community
         - com.mattjakeman.ExtensionManager
-        - org.wezfurlong.wezterm
         - md.obsidian.Obsidian
         - net.ankiweb.Anki
         - page.kramo.Cartridges

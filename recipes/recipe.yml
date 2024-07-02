@@ -228,6 +228,8 @@ modules:
       #- cosmic-desktop
       #- tuned
 
+      - jmtpfs
+
       - globalprotect-openconnect
       - awesome
 

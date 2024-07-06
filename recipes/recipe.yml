@@ -449,7 +449,7 @@ modules:
       #- PaperWM
       # Clipboard Indicator
       - 779
-      - 4245
+      #- 4245
       #- "Weather O'Clock"
       #- Pop Shell
     #uninstall:

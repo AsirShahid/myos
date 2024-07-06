@@ -449,6 +449,7 @@ modules:
       #- PaperWM
       # Clipboard Indicator
       - 779
+      - Gesture Improvements
       #- "Weather O'Clock"
       #- Pop Shell
     #uninstall:

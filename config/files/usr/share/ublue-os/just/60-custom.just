@@ -1258,7 +1258,7 @@ install-incus:
     #!/usr/bin/env bash
     source /usr/lib/ujust/ujust.sh
     CURRENT_IMAGE=$(rpm-ostree status -b --json | jq -r '.deployments[0]."container-image-reference"')
-    if grep -Eq "bluefin-dx|aurora-dx" <<< $CURRENT_IMAGE
+    if grep -Eq "bluefin-dx|aurora-dx|ghcr.io/asirshahid/myos" <<< $CURRENT_IMAGE
     then
         echo 'Installing and configuring Incus.'
         /usr/libexec/bluefin-incus

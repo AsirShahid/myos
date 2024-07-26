@@ -85,7 +85,7 @@ modules:
 
 
       # hyprland
-      - hyprland-git
+      #- hyprland-git
       - hyprpaper # wallpaper util
       - hyprpicker # color picker
       - hyprshot # screenshot util

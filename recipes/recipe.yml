@@ -24,6 +24,7 @@ modules:
       - https://copr.fedorainfracloud.org/coprs/ublue-os/staging/repo/fedora-40/ublue-os-staging-fedora-40.repo
       - https://copr.fedorainfracloud.org/coprs/kylegospo/bazzite-multilib/repo/fedora-40/kylegospo-bazzite-multilib-fedora-40.repo?arch=x86_64
       - https://copr.fedorainfracloud.org/coprs/kylegospo/bazzite/repo/fedora-40/kylegospo-bazzite-fedora-40.repo
+      - https://copr.fedorainfracloud.org/coprs/peterwu/rendezvous/repo/fedora-40/peterwu-rendezvous-fedora-40.repo
       - https://copr.fedorainfracloud.org/coprs/yuezk/globalprotect-openconnect/repo/fedora-40/yuezk-globalprotect-openconnect-fedora-40.repo
       - https://copr.fedorainfracloud.org/coprs/yalter/niri/repo/fedora-40/yalter-niri-fedora-40.repo 
     install:

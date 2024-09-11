@@ -383,7 +383,7 @@ modules:
       - git.sh
       - enablepop.sh
       - post-install.sh
-      - block-ads.sh
+#      - block-ads.sh
 
   - type: fonts
     fonts:

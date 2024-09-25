@@ -224,7 +224,7 @@ modules:
       - fwupd
 
       # Cosmic
-      #- cosmic-desktop
+      - cosmic-desktop
       - tuned
 
       - jmtpfs

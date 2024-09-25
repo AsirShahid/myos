@@ -28,6 +28,7 @@ modules:
       - https://copr.fedorainfracloud.org/coprs/yuezk/globalprotect-openconnect/repo/fedora-40/yuezk-globalprotect-openconnect-fedora-40.repo
       - https://copr.fedorainfracloud.org/coprs/yalter/niri/repo/fedora-40/yalter-niri-fedora-40.repo
       - https://copr.fedorainfracloud.org/coprs/ryanabx/cosmic-epoch/repo/fedora-40/ryanabx-cosmic-epoch-fedora-40.repo
+      - https://copr.fedorainfracloud.org/coprs/wiiznokes/cosmic-applets-unofficial/repo/fedora-40/wiiznokes-cosmic-applets-unofficial-fedora-40.repo
     install:
       - starship
       - helix
@@ -226,6 +227,7 @@ modules:
 
       # Cosmic
       - cosmic-desktop
+      - cosmic-ext-applet-clipboard-manager
       - tuned
 
       - jmtpfs

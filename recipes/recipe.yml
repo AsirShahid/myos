@@ -100,7 +100,7 @@ modules:
       # sway
       - sway
       #- sway-contrib
-      #- waybar-git
+      - waybar-git
       #  sway-config-fedora
       - grim
       - grimshot

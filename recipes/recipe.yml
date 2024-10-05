@@ -135,7 +135,7 @@ modules:
       - nautilus
       - pinentry-gnome3
       - plymouth-system-theme
-      - sddm-wayland-generic # display manager
+      #- sddm-wayland-generic # display manager
       - system-config-printer
 
       # ags

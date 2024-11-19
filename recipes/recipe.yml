@@ -28,8 +28,8 @@ modules:
       - https://copr.fedorainfracloud.org/coprs/yuezk/globalprotect-openconnect/repo/fedora-41/yuezk-globalprotect-openconnect-fedora-41.repo
       - https://copr.fedorainfracloud.org/coprs/yalter/niri/repo/fedora-41/yalter-niri-fedora-41.repo
       - https://copr.fedorainfracloud.org/coprs/ryanabx/cosmic-epoch/repo/fedora-41/ryanabx-cosmic-epoch-fedora-41.repo
-      - https://copr.fedorainfracloud.org/coprs/wiiznokes/cosmic-applets-unofficial/repo/fedora-41/wiiznokes-cosmic-applets-unofficial-fedora-41.repo    
-      install:
+      - https://copr.fedorainfracloud.org/coprs/wiiznokes/cosmic-applets-unofficial/repo/fedora-41/wiiznokes-cosmic-applets-unofficial-fedora-41.repo
+    install:
       - starship
       - helix
       - kitty

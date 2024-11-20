@@ -44,7 +44,7 @@ modules:
       - cliphist
       - openssl-devel
       - zathura
-      - power-profiles-daemon
+      #- power-profiles-daemon
       - libgda 
       - libgda-sqlite
       - zlib-devel
@@ -228,7 +228,6 @@ modules:
       # Cosmic
       - cosmic-desktop
       - cosmic-ext-applet-clipboard-manager
-      #- tuned
 
       - jmtpfs
 

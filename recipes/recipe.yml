@@ -225,10 +225,7 @@ modules:
       # Framework updater
       - fwupd
 
-      # Cosmic
-      - cosmic-desktop
-      - cosmic-ext-applet-clipboard-manager
-
+   
       - jmtpfs
 
       - globalprotect-openconnect

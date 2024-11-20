@@ -75,6 +75,7 @@ modules:
       - libtool
       - libtool-ltdl
       - libtool-ltdl-devel
+      - power-profiles-daemon
 
       ### Make dependencies for MicroTeX
       - tinyxml2

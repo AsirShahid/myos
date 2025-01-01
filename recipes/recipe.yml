@@ -1,3 +1,5 @@
+# yaml-language-server: $schema=https://schema.blue-build.org/recipe-v1.json
+
 # image will be published to ghcr.io/<user>/<name>
 name: myos
 # description will be included in the image's metadata
@@ -45,7 +47,6 @@ modules:
       - cliphist
       - openssl-devel
       - zathura
-      #- power-profiles-daemon
       - libgda 
       - libgda-sqlite
       - zlib-devel
@@ -63,11 +64,7 @@ modules:
       - upower-devel
       - upower
       - bibata-cursor-themes
-      #- steam
-
       - mullvad-vpn
-
-      ### Basic utilities
       - coreutils
       - cliphist
       - fuzzel
@@ -79,59 +76,33 @@ modules:
       - libtool-ltdl
       - libtool-ltdl-devel
       - power-profiles-daemon
-
-      ### Make dependencies for MicroTeX
       - tinyxml2
       - gtkmm2.4-devel
       - gtkmm3.0-devel
       - gtkmm4.0-devel
       - gtksourceviewmm
       - cairomm
-
-
-      # hyprland
-      #- hyprland-git
-      - hyprpaper # wallpaper util
-      - hyprpicker # color picker
-      - hyprshot # screenshot util
+      - hyprpaper
+      - hyprpicker
+      - hyprshot
       - pyprland
       - hyprcursor
-      - xdg-desktop-portal-hyprland # desktop portal
+      - xdg-desktop-portal-hyprland
       - waypaper
       - jq
       - waypipe
-
-      # sway
       - sway
-      #- sway-contrib
       - waybar-git
-      #  sway-config-fedora
       - grim
       - grimshot
       - swaylock-effects
-
-      # audio
       - pavucontrol
       - pulseaudio-utils
       - libnotify
       - pipewire
       - wireplumber
       - pamixer
-
-      # bluetooth
       - blueman
-
-      # network
-      # - network-manager-applet
-      # - NetworkManager-l2tp-gnome
-      # - NetworkManager-libreswan-gnome
-      # - NetworkManager-openconnect-gnome
-      # - NetworkManager-openvpn-gnome
-      # - NetworkManager-pptp-gnome
-      # - NetworkManager-sstp-gnome
-      # - NetworkManager-vpnc-gnome
-
-      # other
       - bolt
       - fprintd-pam
       - gnome-keyring-pam
@@ -139,22 +110,13 @@ modules:
       - nautilus
       - pinentry-gnome3
       - plymouth-system-theme
-      #- sddm-wayland-generic # display manager
       - system-config-printer
-
-      # ags
       - aylurs-gtk-shell-git
       - cargo
       - fzf
       - swappy
       - swww
-      #- fd-find
-       # wf-recorder
-
-      # launcher
       - rofi-wayland
-
-      # environment
       - xorg-x11-server-Xwayland
       - polkit
       - lxpolkit
@@ -172,169 +134,72 @@ modules:
       - google-noto-emoji-fonts
       - gnome-disk-utility
       - xdg-desktop-portal-gtk
-
-      # networking
       - network-manager-applet
       - NetworkManager-openvpn
       - NetworkManager-openconnect
       - bluez
       - bluez-tools
       - blueman
-
-      # file manager
       - thunar
       - thunar-archive-plugin 
       - thunar-volman
       - xarchiver
       - imv
-
-      # screenshot
       - slurp
       - grim
-
-      # display
       - wlr-randr
       - wlsunset
       - brightnessctl
       - swayidle
       - kanshi
-
-      # terminal
       - foot
-
-      # notifications
       - dunst
-
-      # theme and GUI
       - fontawesome-fonts-all
       - gnome-themes-extra
       - gnome-icon-theme
       - paper-icon-theme
       - breeze-icon-theme 
       - papirus-icon-theme
-
-      # River
       - river
       - xdg-desktop-portal-wlr
       - xdg-desktop-portal-gtk
-
-      # Docker
-      #- docker-buildx-plugin
-      #- docker-ce
-      #- docker-ce-cli
-      #- docker-ce-rootless-extras
-      #- docker-compose-plugin
-
-      # Framework updater
       - fwupd
-
-   
       - jmtpfs
-
       - globalprotect-openconnect
       - awesome
-
       - niri
-
       - hunspell-en
       - hunspell-en-US
-
       - gtk-murrine-engine
-
     remove:
-      # example: removing firefox (in favor of the flatpak)
-      # "firefox" is the main package, "firefox-langpacks" is a dependency
-      #- firefox
-      #- xterm-console
-      #- firefox-langpacks # also remove firefox dependency (not required for all packages, this is a special case)
       - tuned-ppd
 
   - type: brew
-    # packages:
-    #   - ollama
-    #   - restic
-    #   - rclone
-    #   - autorestic
-    #   - rust
-    #   - lsd
-    #   - eza
-    #   - neovim
-    #   - kakoune
-    #   - micro
-    #   - fastfetch
-    #   - rsync
-    #   - ripgrep
-    #   - tldr
-    #   - zsh
-    #   - fish
-    #   - xonsh
-    #   - ranger
-    #   - ncdu
-    #   - lazygit
-    #   - atuin
-    #   - axel
-    #   - cmake
-    #   - curl
-    #   - duf
-    #   - httpie
-    #   - procs
-    #   - p7zip
-    #   - unrar
-    #   - texlive
-    #   - docker
-    #   - docker-completion
-    #   - docker-compose
-
-    #   # Tops
-    #   - nvtop
-    #   - htop
-    #   - bpytop
-
-    # # Auto-update Brew binary
-    auto-update: true # Optional - Default: true - Expects type: boolean
-    # Interval between Brew updates
-    update-interval: '6h' # Optional - Default: '6h' - Expects type: string
-    # Time delay after boot before first Brew update
-    update-wait-after-boot: '10min' # Optional - Default: '10min' - Expects type: string
-    # Auto-upgrade Brew packages
-    auto-upgrade: true # Optional - Default: true - Expects type: boolean
-    # Interval between Brew package upgrades
-    upgrade-interval: '8h' # Optional - Default: '8h' - Expects type: string
-    # Time delay after boot before first Brew upgrade
-    upgrade-wait-after-boot: '30min' # Optional - Default: '30min' - Expects type: string
-    # Apply nofile limits for Brew installations
-    nofile-limits: false # Optional - Default: false - Expects type: boolean
-    # Control Brew analytics
-    brew-analytics: true # Optional - Default: true - Expects type: boolean
+    auto-update: true
+    update-interval: '6h'
+    update-wait-after-boot: '10min'
+    auto-upgrade: true
+    upgrade-interval: '8h'
+    upgrade-wait-after-boot: '30min'
+    nofile-limits: false
+    brew-analytics: true
 
   - type: default-flatpaks
-    notify: true # Send notification after install/uninstall is finished (true/false)
+    notify: true
     system:
-      # If no repo information is specified, Flathub will be used by default
       repo-url: https://dl.flathub.org/repo/flathub.flatpakrepo
       repo-name: flathub
-      repo-title: "Flathub (system-wide)" # Optional; this sets the remote's user-facing name in graphical frontends like GNOME Software
+      repo-title: "Flathub (system-wide)"
       install:
         - org.mozilla.firefox
         - org.gnome.Loupe
-        #- one.ablaze.floorp//lightning # This is an example of flatpak which has multiple branches in selection (flatpak//branch).
-      # Flatpak runtimes are not supported (like org.winehq.Wine//stable-23.08),
-      # only normal flatpak applications are (like Floorp Lightning web browser in this example).
-      # Installing different branches of the same Flatpak is not supported.
-      remove:
-      # - org.gnome.eog
-  
-    # Assuming that the above example is configured first in a recipe,
-    # a subsequent usage might look like this:
+      remove: []
+
   - type: default-flatpaks
     system:
-      # If the repo-* fields are omitted on the subsequent usage,
-      # the module will use the previously configured repo.
-      # Otherwise, it will overwrite the repo configuration.
       install:
-        - org.kde.kdenlive # this Flatpak is appended to the insta llist
+        - org.kde.kdenlive
         - com.valvesoftware.Steam
-        #- com.steamgriddb.steam-rom-manager
         - org.gnome.World.PikaBackup
         - com.jetbrains.PyCharm-Community
         - com.mattjakeman.ExtensionManager
@@ -373,18 +238,18 @@ modules:
         - org.chromium.Chromium
         - com.github.wwmm.easyeffects
         - com.github.rafostar.Clapper
+      remove: []
 
     user:
-      # repo-name will overwrite the previously-configured repo-name for the user remote
       repo-name: flathub-user
       repo-title: "Flathub (User)"
+      install: []
+      remove: []
 
   - type: script
     scripts:
-      #- nix.sh
       - getbeeper.sh
       - getsimplex.sh
-      #- ags-deps.sh
       - git.sh
       - enablepop.sh
       - post-install.sh
@@ -393,7 +258,7 @@ modules:
   - type: fonts
     fonts:
       nerd-fonts:
-        - FiraCode # don't add spaces or "Nerd Font" suffix.
+        - FiraCode
         - Hack
         - SourceCodePro
         - Terminus
@@ -410,11 +275,9 @@ modules:
 
   - type: bling
     install:
-      - ublue-update # https://github.com/ublue-os/ublue-update
-      - 1password # install 1Password (stable) and `op` CLI tool
-      - dconf-update-service # a service unit that updates the dconf db on boot
-        # gnome-vrr # enables gnome-vrr for your image
-        # - laptop # installs TLP and configures your system for laptop usage
+      - ublue-update
+      - 1password
+      - dconf-update-service
 
   - type: chezmoi
     # Installs chezmoi to /usr/bin/chezmoi from latest Github release
@@ -432,7 +295,7 @@ modules:
     # Disable the timer that updates chezmoi with the interval set above
     disable_update: false # Optional - Default: false - Expects type: boolean
     # Policy for handling file that has changed on disk compared to your repo. Accepts "skip" or "replace"
-    changed-file-policy: "skip" # Optional - Default: "skip" - Expects type: string
+    file-conflict-policy: "skip" # Optional - Default: "skip" - Expects type: string
 
 #   - type: akmods
 #     base: main # if not specified, classic "main" base is used by default
@@ -487,6 +350,5 @@ modules:
       unmasked:
         #- example.service # Unmasked (runs for the user, even if previously masked)
 
-  - type: signing # this sets up the proper policy & signing files for signed images to work fully
-
-
+  - type: signing
+    key: cosign.pub # The public key to verify signed images

@@ -112,7 +112,7 @@ modules:
       - pinentry-gnome3
       - plymouth-system-theme
       - system-config-printer
-      - aylurs-gtk-shell-git
+      - aylurs-gtk-shell
       - cargo
       - fzf
       - swappy

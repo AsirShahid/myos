@@ -32,6 +32,7 @@ modules:
       - https://copr.fedorainfracloud.org/coprs/ryanabx/cosmic-epoch/repo/fedora-41/ryanabx-cosmic-epoch-fedora-41.repo
       - https://copr.fedorainfracloud.org/coprs/wiiznokes/cosmic-applets-unofficial/repo/fedora-41/wiiznokes-cosmic-applets-unofficial-fedora-41.repo
       - https://repository.mullvad.net/rpm/stable/mullvad.repo
+      - https://repo.protonvpn.com/fedora/protonvpn-stable.repo
     install:
       - starship
       - helix
@@ -171,6 +172,10 @@ modules:
       - hunspell-en
       - hunspell-en-US
       - gtk-murrine-engine
+      - protonvpn-cli
+      - openvpn # ProtonVPN requires OpenVPN
+      - dialog  # For text interface (optional but recommended)
+      - python3-pip
     remove:
       - tuned-ppd
 

@@ -166,9 +166,10 @@ modules:
       - xdg-desktop-portal-gtk
       - fwupd
       - jmtpfs
-      - awesome
       - globalprotect-openconnect
       - awesome
+      - xorg-x11-server-Xorg
+      - xorg-x11-xinit
       - niri
       - hunspell-en
       - hunspell-en-US

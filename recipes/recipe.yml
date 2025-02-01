@@ -178,6 +178,8 @@ modules:
       - openvpn # ProtonVPN requires OpenVPN
       - dialog  # For text interface (optional but recommended)
       - python3-pip
+      - i3
+
     remove:
       - tuned-ppd
 

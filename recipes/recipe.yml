@@ -170,6 +170,7 @@ modules:
       - awesome
       - xorg-x11-server-Xorg
       - xorg-x11-xinit
+      - flameshot
       - niri
       - hunspell-en
       - hunspell-en-US

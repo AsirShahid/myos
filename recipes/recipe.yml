@@ -31,6 +31,7 @@ modules:
       - https://copr.fedorainfracloud.org/coprs/yalter/niri/repo/fedora-41/yalter-niri-fedora-41.repo
       - https://copr.fedorainfracloud.org/coprs/ryanabx/cosmic-epoch/repo/fedora-41/ryanabx-cosmic-epoch-fedora-41.repo
       - https://copr.fedorainfracloud.org/coprs/wiiznokes/cosmic-applets-unofficial/repo/fedora-41/wiiznokes-cosmic-applets-unofficial-fedora-41.repo
+      - https://copr.fedorainfracloud.org/coprs/sneexy/zen-browser/repo/fedora-41/sneexy-zen-browser-fedora-41.repo
       - https://repository.mullvad.net/rpm/stable/mullvad.repo
 #      - https://repo.protonvpn.com/fedora/protonvpn-stable.repo
     install:
@@ -180,6 +181,9 @@ modules:
       - dialog  # For text interface (optional but recommended)
       - python3-pip
       - i3
+
+      - zen-browser
+      - zen-twilight
 
     remove:
       - tuned-ppd

@@ -223,7 +223,7 @@ modules:
         - com.usebottles.bottles
         - com.vysp3r.ProtonPlus
         - net.davidotek.pupgui2
-        - org.ryujinx.Ryujinx
+        #- org.ryujinx.Ryujinx
         - org.mozilla.firefox
         - net.codelogistics.webapps
         - com.quexten.Goldwarden

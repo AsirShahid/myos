@@ -242,7 +242,7 @@ modules:
         - com.jeffser.Alpaca
         - im.riot.Riot
         - com.stremio.Stremio
-        - com.github.GradienceTeam.Gradience
+        # - com.github.GradienceTeam.Gradience
         - org.gnome.Fractal
         - com.ticktick.TickTick
         - org.libreoffice.LibreOffice

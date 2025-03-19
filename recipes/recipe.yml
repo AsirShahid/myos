@@ -1,1 +1,368 @@
+# yaml-language-server: $schema=https://schema.blue-build.org/recipe-v1.json
+
+# image will be published to ghcr.io/<user>/<name>
+name: myos
+# description will be included in the image's metadata
+description: This is my personal OS image.
+
+# the base image to build on top of (FROM) and the version tag to use
+base-image: ghcr.io/ublue-os/bluefin-dx
+image-version: latest # latest is also supported if you want new updates ASAP
+
+# module configuration, executed in order
+# you can include multiple instances of the same module
+modules:
+  - type: files
+    files:
+      - usr: /usr # copies config/files/usr into your image's /usr.
+                  # put configuration files you want in /etc/ on a booted system 
+                  # in /usr/etc/ in the image. read more in files module reference.
+
+  - type: rpm-ostree
+    repos:
+      - https://copr.fedorainfracloud.org/coprs/atim/starship/repo/fedora-41/atim-starship-fedora-41.repo
+      - https://copr.fedorainfracloud.org/coprs/solopasha/hyprland/repo/fedora-41/solopasha-hyprland-fedora-41.repo
+      - https://copr.fedorainfracloud.org/coprs/g/copr/PyPI/repo/fedora-41/group_copr-PyPI-fedora-41.repo
+      - https://copr.fedorainfracloud.org/coprs/ublue-os/staging/repo/fedora-41/ublue-os-staging-fedora-41.repo
+      - https://copr.fedorainfracloud.org/coprs/kylegospo/bazzite-multilib/repo/fedora-41/kylegospo-bazzite-multilib-fedora-41.repo?arch=x86_64
+      - https://copr.fedorainfracloud.org/coprs/kylegospo/bazzite/repo/fedora-41/kylegospo-bazzite-fedora-41.repo
+      - https://copr.fedorainfracloud.org/coprs/peterwu/rendezvous/repo/fedora-41/peterwu-rendezvous-fedora-41.repo
+      - https://copr.fedorainfracloud.org/coprs/yuezk/globalprotect-openconnect/repo/fedora-41/yuezk-globalprotect-openconnect-fedora-41.repo
+      - https://copr.fedorainfracloud.org/coprs/yalter/niri/repo/fedora-41/yalter-niri-fedora-41.repo
+      - https://copr.fedorainfracloud.org/coprs/ryanabx/cosmic-epoch/repo/fedora-41/ryanabx-cosmic-epoch-fedora-41.repo
+      - https://copr.fedorainfracloud.org/coprs/wiiznokes/cosmic-applets-unofficial/repo/fedora-41/wiiznokes-cosmic-applets-unofficial-fedora-41.repo
+      - https://copr.fedorainfracloud.org/coprs/sneexy/zen-browser/repo/fedora-41/sneexy-zen-browser-fedora-41.repo
+      - https://repository.mullvad.net/rpm/stable/mullvad.repo
+#      - https://repo.protonvpn.com/fedora/protonvpn-stable.repo
+    install:
+      - starship
+      - helix
+      - kitty
+      - alacritty
+      - ptyxis
+      - emacs
+      - timeshift
+      - gnome-shell-extension-pop-shell
+      - gnome-boxes
+      - kdeconnectd
+      - antimicrox
+      - cliphist
+      - openssl-devel
+      - zathura
+      - libgda 
+      - libgda-sqlite
+      - zlib-devel
+      - libjpeg-turbo-devel
+      - python3-devel
+      - libpng-devel
+      - libtiff-devel
+      - freetype-devel
+      - lcms2-devel
+      - libwebp-devel
+      - wireplumber-devel
+      - libdbusmenu-gtk3-devel
+      - playerctl-devel
+      - gtk-layer-shell-devel
+      - upower-devel
+      - upower
+      - bibata-cursor-themes
+      - mullvad-vpn
+      - coreutils
+      - cliphist
+      - fuzzel
+      - gojq
+      - meson
+      - typescript
+      - gjs
+      - libtool
+      - libtool-ltdl
+      - libtool-ltdl-devel
+      - power-profiles-daemon
+      - tinyxml2
+      - gtkmm2.4-devel
+      - gtkmm3.0-devel
+      - gtkmm4.0-devel
+      - gtksourceviewmm
+      - cairomm
+      - hyprpaper
+      - hyprpicker
+      - hyprshot
+      - pyprland
+      - hyprcursor
+      - xdg-desktop-portal-hyprland
+      - waypaper
+      - jq
+      - waypipe
+      - sway
+      - waybar-git
+      - grim
+      - grimshot
+      - swaylock-effects
+      - pavucontrol
+      - pulseaudio-utils
+      - libnotify
+      - pipewire
+      - wireplumber
+      - pamixer
+      - blueman
+      - bolt
+      - fprintd-pam
+      - gnome-keyring-pam
+      - lxqt-policykit
+      - nautilus
+      - pinentry-gnome3
+      - plymouth-system-theme
+      - system-config-printer
+      - aylurs-gtk-shell
+      - cargo
+      - fzf
+      - swappy
+      - swww
+      - rofi-wayland
+      - xorg-x11-server-Xwayland
+      - polkit
+      - lxpolkit
+      - xdg-user-dirs
+      - dbus-tools
+      - dbus-daemon
+      - wl-clipboard
+      - gnome-keyring
+      - pavucontrol
+      - playerctl
+      - qt5-qtwayland
+      - qt6-qtwayland
+      - vulkan-validation-layers
+      - vulkan-tools
+      - google-noto-emoji-fonts
+      - gnome-disk-utility
+      - xdg-desktop-portal-gtk
+      - network-manager-applet
+      - NetworkManager-openvpn
+      - NetworkManager-openconnect
+      - bluez
+      - bluez-tools
+      - blueman
+      - thunar
+      - thunar-archive-plugin 
+      - thunar-volman
+      - xarchiver
+      - imv
+      - slurp
+      - grim
+      - wlr-randr
+      - wlsunset
+      - brightnessctl
+      - swayidle
+      - kanshi
+      - foot
+      - dunst
+      - fontawesome-fonts-all
+      - gnome-themes-extra
+      - gnome-icon-theme
+      - paper-icon-theme
+      - breeze-icon-theme 
+      - papirus-icon-theme
+      - river
+      - xdg-desktop-portal-wlr
+      - xdg-desktop-portal-gtk
+      - fwupd
+      - jmtpfs
+      - globalprotect-openconnect
+      - awesome
+      - xorg-x11-server-Xorg
+      - xorg-x11
+      - flameshot
+      - niri
+      - hunspell-en
+      - hunspell-en-US
+      - gtk-murrine-engine
+#      - protonvpn-cli
+      - openvpn # ProtonVPN requires OpenVPN
+      - dialog  # For text interface (optional but recommended)
+      - python3-pip
+      - i3
+
+      - zen-browser
+      - zen-twilight
+
+    remove:
+      - tuned-ppd
+
+  - type: brew
+    auto-update: true
+    update-interval: '6h'
+    update-wait-after-boot: '10min'
+    auto-upgrade: true
+    upgrade-interval: '8h'
+    upgrade-wait-after-boot: '30min'
+    nofile-limits: false
+    brew-analytics: true
+
+  - type: default-flatpaks
+    notify: true
+    system:
+      repo-url: https://dl.flathub.org/repo/flathub.flatpakrepo
+      repo-name: flathub
+      repo-title: "Flathub (system-wide)"
+      install:
+        - org.mozilla.firefox
+        - org.gnome.Loupe
+      remove: []
+
+  - type: default-flatpaks
+    system:
+      install:
+        #- org.kde.kdenlive
+        - com.valvesoftware.Steam
+        #- org.gnome.World.PikaBackup
+        #- com.jetbrains.PyCharm-Community
+        - com.mattjakeman.ExtensionManager
+        - md.obsidian.Obsidian
         - net.ankiweb.Anki
+        - page.kramo.Cartridges
+        - com.usebottles.bottles
+        - com.vysp3r.ProtonPlus
+        - net.davidotek.pupgui2
+        #- org.ryujinx.Ryujinx
+        - org.mozilla.firefox
+        - net.codelogistics.webapps
+        - com.quexten.Goldwarden
+        - com.bitwarden.desktop
+        - org.telegram.desktop
+        - com.slack.Slack
+        #- io.atom.Atom
+        - org.gnome.baobab
+        - net.nokyan.Resources
+        - com.github.tchx84.Flatseal
+        - org.kde.okular
+        - com.discordapp.Discord
+        - io.gitlab.liferooter.TextPieces
+        - io.github.flattool.Warehouse
+        - org.DolphinEmu.dolphin-emu
+        - com.jeffser.Alpaca
+        - im.riot.Riot
+        - com.stremio.Stremio
+        # - com.github.GradienceTeam.Gradience
+        - org.gnome.Fractal
+        - com.ticktick.TickTick
+        - org.libreoffice.LibreOffice
+        - com.wps.Office
+        - com.gopeed.Gopeed
+        - org.qbittorrent.qBittorrent
+        - org.chromium.Chromium
+        - com.github.wwmm.easyeffects
+        - com.github.rafostar.Clapper
+      remove: []
+
+    user:
+      repo-name: flathub-user
+      repo-title: "Flathub (User)"
+      install: []
+      remove: []
+
+  - type: script
+    scripts:
+      - getbeeper.sh
+      - getsimplex.sh
+      - git.sh
+      - enablepop.sh
+      - post-install.sh
+#      - block-ads.sh
+
+  - type: fonts
+    fonts:
+      nerd-fonts:
+        - FiraCode
+        - Hack
+        - SourceCodePro
+        - Terminus
+        - JetBrainsMono
+        - NerdFontsSymbolsOnly
+        - Meslo
+        - Iosevka
+        - IosevkaTerm
+        - Inconsolata
+        - Noto
+      google-fonts:
+        - Roboto
+        - Open Sans
+
+  - type: bling
+    install:
+      - ublue-update
+      - 1password
+      - dconf-update-service
+
+  - type: chezmoi
+    # Installs chezmoi to /usr/bin/chezmoi from latest Github release
+    install_chezmoi: true # Optional - Default: true  - Expects type: boolean
+    # () Git repository to initialize
+    repository: "https://github.com/AsirShahid/dotfiles" # Required - Default: n/a  - Expects type: string
+    # Enable the modules services globally for all users
+    enable_all_users: true # Optional - Default: true - Expects type: boolean
+    # Dotfiles will be updated with this interval
+    run_every: '1d' # Optional - Default: '1d' - Expects type: string
+    # Dotfile updates will wait this long after a boot before running
+    wait_after_boot: '5m' # Optional - Default: '5m' - Expects type: string
+    # Disable the service that initializes `repository` on users that are logged in or has linger enabled
+    disable_init: false # Optional - Default: false - Expects type: boolean
+    # Disable the timer that updates chezmoi with the interval set above
+    disable_update: false # Optional - Default: false - Expects type: boolean
+    # Policy for handling file that has changed on disk compared to your repo. Accepts "skip" or "replace"
+    file-conflict-policy: "skip" # Optional - Default: "skip" - Expects type: string
+
+#   - type: akmods
+#     base: main # if not specified, classic "main" base is used by default
+#     install:
+#       - framework-laptop
+#       - ryzen-smu
+#       - zenergy
+  - type: gschema-overrides
+    include:
+      - zz1-myoverride.gschema.override # test & compile the override file included in config/gschema-overrides/zz1-myoverride.gschema.override     #- gcadapter_oc
+
+  - type: gnome-extensions
+    install:
+      - Night Theme Switcher
+      - Blur my Shell # Notice how extension is named "Blur my Shell" & not "Blur My Shell"?
+                          # Name is case-sensitive, so check if extension name is typed correctly
+      - Bluetooth Battery Meter
+      #- Pano - Clipboard Manager
+      - Caffeine
+      - OpenWeather Refined
+      #- PaperWM
+      # Clipboard Indicator
+      - 779
+      #- 4245
+      #- "Weather O'Clock"
+      #- Pop Shell
+    #uninstall:
+      #- GSConnect # Uninstall step here should be used only for the extensions
+                      # which are not installed through OS package manager in the base image,
+                      # like extensions installed from gnome-extensions module
+
+  - type: systemd
+    system:
+      enabled:
+        #- nix-daemon.service
+        - power-profiles-daemon.service
+        #- coolercontrold.service
+        #- example.service # Enabled (runs on system boot)
+      disabled:
+        #- example.target # Disabled (does not run on system boot, unless other unit strictly requires it)
+      masked:
+        #- example.service # Masked (does not run on system boot, under any circumstances)
+      unmasked:
+        #- example.service # Unmasked (runs on system boot, even if previously masked)
+    user:
+      enabled:
+        #- example.timer # Enabled (runs for the user)
+      disabled:
+        #- example.service # Disabled (does not run for the user, unless other unit strictly requires it)
+      masked:
+        #- example.service # Masked (does not run for the user, under any circumstances)
+      unmasked:
+        #- example.service # Unmasked (runs for the user, even if previously masked)
+
+  - type: signing
+    key: cosign.pub # The public key to verify signed images

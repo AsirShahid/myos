@@ -37,3 +37,4 @@ jobs:
           cleanup_temporary_files: true     # Cleans up temp files during build
           prune_build_artifacts: true       # Removes unneeded build artifacts
           aggressive_cleanup: true          # More aggressive cleanup during builds
+          rechunk: true

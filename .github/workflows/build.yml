@@ -33,3 +33,7 @@ jobs:
           registry_token: ${{ github.token }}
           pr_event_number: ${{ github.event.number }}
           maximize_build_space: true
+          # Add these cleanup options:
+          cleanup_temporary_files: true     # Cleans up temp files during build
+          prune_build_artifacts: true       # Removes unneeded build artifacts
+          aggressive_cleanup: true          # More aggressive cleanup during builds

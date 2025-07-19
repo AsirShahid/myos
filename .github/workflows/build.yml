@@ -33,5 +33,6 @@ jobs:
           registry_token: ${{ github.token }}
           pr_event_number: ${{ github.event.number }}
           maximize_build_space: true
+          free_space_before_build: true
           # Add these cleanup options:
           rechunk: true

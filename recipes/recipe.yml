@@ -170,7 +170,6 @@ modules:
       - globalprotect-openconnect
       - awesome
       - xorg-x11-server-Xorg
-      - xorg-x11
       - flameshot
       - niri
       - hunspell-en

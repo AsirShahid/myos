@@ -295,7 +295,6 @@ modules:
 
   - type: chezmoi
     # Installs chezmoi to /usr/bin/chezmoi from latest Github release
-    install: true # Optional - Default: true  - Expects type: boolean
     # () Git repository to initialize
     repository: "https://github.com/AsirShahid/dotfiles" # Required - Default: n/a  - Expects type: string
     # Enable the modules services globally for all users

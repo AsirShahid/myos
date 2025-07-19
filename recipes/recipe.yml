@@ -278,8 +278,6 @@ modules:
         - JetBrainsMono
         - NerdFontsSymbolsOnly
         - Meslo
-        - Iosevka
-        - IosevkaTerm
         - Inconsolata
         - Noto
       google-fonts:

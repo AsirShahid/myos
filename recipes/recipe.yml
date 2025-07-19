@@ -295,19 +295,11 @@ modules:
 
   - type: chezmoi
     # Installs chezmoi to /usr/bin/chezmoi from latest Github release
-    install_chezmoi: true # Optional - Default: true  - Expects type: boolean
+    install: true # Optional - Default: true  - Expects type: boolean
     # () Git repository to initialize
     repository: "https://github.com/AsirShahid/dotfiles" # Required - Default: n/a  - Expects type: string
     # Enable the modules services globally for all users
-    enable_all_users: true # Optional - Default: true - Expects type: boolean
-    # Dotfiles will be updated with this interval
-    run_every: '1d' # Optional - Default: '1d' - Expects type: string
-    # Dotfile updates will wait this long after a boot before running
-    wait_after_boot: '5m' # Optional - Default: '5m' - Expects type: string
-    # Disable the service that initializes `repository` on users that are logged in or has linger enabled
-    disable_init: false # Optional - Default: false - Expects type: boolean
-    # Disable the timer that updates chezmoi with the interval set above
-    disable_update: false # Optional - Default: false - Expects type: boolean
+    all-users: true # Optional - Default: true - Expects type: boolean
     # Policy for handling file that has changed on disk compared to your repo. Accepts "skip" or "replace"
     file-conflict-policy: "skip" # Optional - Default: "skip" - Expects type: string
 
@@ -348,21 +340,20 @@ modules:
         - power-profiles-daemon.service
         #- coolercontrold.service
         #- example.service # Enabled (runs on system boot)
-      disabled:
+      disabled: []
         #- example.target # Disabled (does not run on system boot, unless other unit strictly requires it)
-      masked:
+      masked: []
         #- example.service # Masked (does not run on system boot, under any circumstances)
-      unmasked:
+      unmasked: []
         #- example.service # Unmasked (runs on system boot, even if previously masked)
     user:
-      enabled:
+      enabled: []
         #- example.timer # Enabled (runs for the user)
-      disabled:
+      disabled: []
         #- example.service # Disabled (does not run for the user, unless other unit strictly requires it)
-      masked:
+      masked: []
         #- example.service # Masked (does not run for the user, under any circumstances)
-      unmasked:
+      unmasked: []
         #- example.service # Unmasked (runs for the user, even if previously masked)
 
   - type: signing
-    key: cosign.pub # The public key to verify signed images

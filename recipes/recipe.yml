@@ -286,7 +286,6 @@ modules:
 
   - type: bling
     install:
-      - ublue-update
       - 1password
       - dconf-update-service
 

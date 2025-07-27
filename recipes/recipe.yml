@@ -198,66 +198,54 @@ modules:
     brew-analytics: true
 
   - type: default-flatpaks
-    notify: true
-    system:
-      repo-url: https://dl.flathub.org/repo/flathub.flatpakrepo
-      repo-name: flathub
-      repo-title: "Flathub (system-wide)"
-      install:
-        - org.mozilla.firefox
-        - org.gnome.Loupe
-      remove: []
-
-  - type: default-flatpaks
-    system:
-      install:
-        #- org.kde.kdenlive
-        - com.valvesoftware.Steam
-        #- org.gnome.World.PikaBackup
-        #- com.jetbrains.PyCharm-Community
-        - com.mattjakeman.ExtensionManager
-        - md.obsidian.Obsidian
-        - net.ankiweb.Anki
-        - page.kramo.Cartridges
-        - com.usebottles.bottles
-        - com.vysp3r.ProtonPlus
-        - net.davidotek.pupgui2
-        #- org.ryujinx.Ryujinx
-        - org.mozilla.firefox
-        - net.codelogistics.webapps
-        - com.quexten.Goldwarden
-        - com.bitwarden.desktop
-        - org.telegram.desktop
-        - com.slack.Slack
-        #- io.atom.Atom
-        - org.gnome.baobab
-        - net.nokyan.Resources
-        - com.github.tchx84.Flatseal
-        - org.kde.okular
-        - com.discordapp.Discord
-        - io.gitlab.liferooter.TextPieces
-        - io.github.flattool.Warehouse
-        - org.DolphinEmu.dolphin-emu
-        - com.jeffser.Alpaca
-        - im.riot.Riot
-        - com.stremio.Stremio
-        # - com.github.GradienceTeam.Gradience
-        - org.gnome.Fractal
-        - com.ticktick.TickTick
-        - org.libreoffice.LibreOffice
-        - com.wps.Office
-        - com.gopeed.Gopeed
-        - org.qbittorrent.qBittorrent
-        - org.chromium.Chromium
-        - com.github.wwmm.easyeffects
-        - com.github.rafostar.Clapper
-      remove: []
-
-    user:
-      repo-name: flathub-user
-      repo-title: "Flathub (User)"
-      install: []
-      remove: []
+    configurations:
+      - notify: true
+        scope: system
+        repo:
+          url: https://dl.flathub.org/repo/flathub.flatpakrepo
+          name: flathub
+          title: "Flathub (system-wide)"
+        install:
+          - org.mozilla.firefox
+          - org.gnome.Loupe
+          - com.valvesoftware.Steam
+          - com.mattjakeman.ExtensionManager
+          - md.obsidian.Obsidian
+          - net.ankiweb.Anki
+          - page.kramo.Cartridges
+          - com.usebottles.bottles
+          - com.vysp3r.ProtonPlus
+          - net.davidotek.pupgui2
+          - net.codelogistics.webapps
+          - com.quexten.Goldwarden
+          - com.bitwarden.desktop
+          - org.telegram.desktop
+          - com.slack.Slack
+          - org.gnome.baobab
+          - net.nokyan.Resources
+          - com.github.tchx84.Flatseal
+          - org.kde.okular
+          - com.discordapp.Discord
+          - io.gitlab.liferooter.TextPieces
+          - io.github.flattool.Warehouse
+          - org.DolphinEmu.dolphin-emu
+          - com.jeffser.Alpaca
+          - im.riot.Riot
+          - com.stremio.Stremio
+          - org.gnome.Fractal
+          - com.ticktick.TickTick
+          - org.libreoffice.LibreOffice
+          - com.wps.Office
+          - com.gopeed.Gopeed
+          - org.qbittorrent.qBittorrent
+          - org.chromium.Chromium
+          - com.github.wwmm.easyeffects
+          - com.github.rafostar.Clapper
+      - scope: user
+        repo:
+          name: flathub-user
+          title: "Flathub (User)"
+        install: []
 
   - type: script
     scripts:

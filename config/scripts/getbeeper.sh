@@ -5,10 +5,9 @@
 # builds actually ran successfully without any errors!
 set -oue pipefail
 
-# Your code goes here.
-echo 'This is an example shell script'
-echo 'Scripts here will run during build if specified in recipe.yml'
-wget https://download.beeper.com/linux/appImage/x64
-chmod a+x ./x64
-mv x64 beeper
+# Download and install Beeper for Linux
+echo 'Downloading Beeper for Linux...'
+wget -O beeper https://api.beeper.com/desktop/download/linux/x64/stable/com.automattic.beeper.desktop
+chmod a+x ./beeper
 mv beeper /usr/bin/
+echo 'Beeper installation completed'

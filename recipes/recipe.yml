@@ -51,6 +51,9 @@ modules:
         - cliphist
         - openssl-devel
         - zathura
+        - zathura-pdf-mupdf
+        - zathura-ps
+        - zathura-djvu
         - libgda
         - libgda-sqlite
         - zlib-devel

@@ -184,7 +184,6 @@ modules:
         - dialog
         - python3-pip
         - i3
-        - zen-browser
         - zen-twilight
     remove:
       packages:

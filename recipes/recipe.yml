@@ -261,15 +261,11 @@ modules:
   - type: fonts
     fonts:
       nerd-fonts:
-        - FiraCode
-        - Hack
         - SourceCodePro
         - Terminus
         - JetBrainsMono
         - NerdFontsSymbolsOnly
-        - Meslo
         - Inconsolata
-        - Noto
       google-fonts:
         - Roboto
         - Open Sans

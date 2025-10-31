@@ -1,22 +1,16 @@
 # yaml-language-server: $schema=https://schema.blue-build.org/recipe-v1.json
 
-# image will be published to ghcr.io/<user>/<name>
+# CLEANED UP VERSION - Duplicates removed, conflicts addressed
 name: myos
-# description will be included in the image's metadata
 description: This is my personal OS image.
 
-# the base image to build on top of (FROM) and the version tag to use
 base-image: ghcr.io/ublue-os/bluefin-dx
-image-version: latest # latest is also supported if you want new updates ASAP
+image-version: latest
 
-# module configuration, executed in order
-# you can include multiple instances of the same module
 modules:
   - type: files
     files:
-      - usr: /usr # copies config/files/usr into your image's /usr.
-                  # put configuration files you want in /etc/ on a booted system 
-                  # in /usr/etc/ in the image. read more in files module reference.
+      - usr: /usr
 
   - type: dnf
     repos:
@@ -34,26 +28,31 @@ modules:
         - sneexy/zen-browser
       files:
         - https://repository.mullvad.net/rpm/stable/mullvad.repo
-#      - https://repo.protonvpn.com/fedora/protonvpn-stable.repo
     install:
       packages:
+        # Editors and Terminal Tools
         - starship
         - helix
         - kitty
         - alacritty
         - ptyxis
         - emacs
+        
+        # System Tools
         - timeshift
-        - gnome-shell-extension-pop-shell
         - gnome-boxes
         - kdeconnectd
         - antimicrox
         - cliphist
-        - openssl-devel
+        
+        # Document Viewers
         - zathura
         - zathura-pdf-mupdf
         - zathura-ps
         - zathura-djvu
+        
+        # Development Libraries
+        - openssl-devel
         - libgda
         - libgda-sqlite
         - zlib-devel
@@ -70,25 +69,45 @@ modules:
         - gtk-layer-shell-devel
         - upower-devel
         - upower
-        - bibata-cursor-themes
-        - mullvad-vpn
-        - coreutils
-        - cliphist
-        - fuzzel
-        - gojq
-        - meson
-        - typescript
-        - gjs
         - libtool
         - libtool-ltdl
         - libtool-ltdl-devel
-        - power-profiles-daemon
         - tinyxml2
         - gtkmm2.4-devel
         - gtkmm3.0-devel
         - gtkmm4.0-devel
         - gtksourceviewmm
         - cairomm
+        
+        # Cursors and Themes
+        - bibata-cursor-themes
+        - fontawesome-fonts-all
+        - gnome-themes-extra
+        - gnome-icon-theme
+        - paper-icon-theme
+        - breeze-icon-theme
+        - papirus-icon-theme
+        - gtk-murrine-engine
+        
+        # VPN
+        - mullvad-vpn
+        - globalprotect-openconnect
+        - openvpn
+        - NetworkManager-openvpn
+        - NetworkManager-openconnect
+        
+        # Core Utils (most already in base)
+        - coreutils
+        - fuzzel
+        - gojq
+        - meson
+        - typescript
+        - gjs
+        - jq
+        - fzf
+        - dialog
+        
+        # Hyprland Ecosystem
         - hyprpaper
         - hyprpicker
         - hyprshot
@@ -96,98 +115,115 @@ modules:
         - hyprcursor
         - xdg-desktop-portal-hyprland
         - waypaper
-        - jq
         - waypipe
+        
+        # Sway
         - sway
         - waybar-git
-        - grim
         - grimshot
         - swaylock-effects
-        - pavucontrol
-        - pulseaudio-utils
-        - libnotify
-        - pipewire
-        - wireplumber
-        - pamixer
-        - blueman
-        - bolt
-        - fprintd-pam
-        - gnome-keyring-pam
-        - lxqt-policykit
-        - nautilus
-        - pinentry-gnome3
-        - plymouth-system-theme
-        - system-config-printer
-        - aylurs-gtk-shell
-        - cargo
-        - fzf
+        - swayidle
+        - kanshi
+        
+        # Other Window Managers
+        - niri
+        - river
+        - awesome
+        - i3
+        
+        # Wayland Tools
+        - grim
+        - slurp
+        - wlr-randr
+        - wlsunset
+        - brightnessctl
         - swappy
         - swww
         - rofi-wayland
-        - xorg-x11-server-Xwayland
-        - polkit
-        - lxpolkit
-        - xdg-user-dirs
-        - dbus-tools
-        - dbus-daemon
-        - wl-clipboard
-        - gnome-keyring
-        - pavucontrol
-        - playerctl
-        - qt5-qtwayland
-        - qt6-qtwayland
-        - vulkan-validation-layers
-        - vulkan-tools
-        - google-noto-emoji-fonts
-        - gnome-disk-utility
-        - xdg-desktop-portal-gtk
-        - network-manager-applet
-        - NetworkManager-openvpn
-        - NetworkManager-openconnect
+        - foot
+        - dunst
+        - imv
+        
+        # Audio/Video
+        - pavucontrol  # REMOVED DUPLICATE
+        - pulseaudio-utils
+        - pipewire
+        - wireplumber
+        - pamixer
+        - playerctl  # REMOVED DUPLICATE
+        
+        # Bluetooth
         - bluez
         - bluez-tools
         - blueman
+        - bolt
+        
+        # Authentication
+        - fprintd-pam
+        - gnome-keyring-pam
+        - gnome-keyring  # REMOVED DUPLICATE
+        - lxqt-policykit
+        - lxpolkit  # Note: This might conflict with lxqt-policykit
+        - polkit
+        - pinentry-gnome3
+        
+        # Desktop Portals & X/Wayland
+        - xorg-x11-server-Xwayland  # REMOVED DUPLICATE
+        - xorg-x11-server-Xorg
+        - xdg-user-dirs
+        - xdg-desktop-portal-gtk  # REMOVED DUPLICATE
+        - xdg-desktop-portal-wlr
+        
+        # D-Bus
+        - dbus-tools
+        - dbus-daemon
+        
+        # Clipboard
+        - wl-clipboard
+        
+        # Qt Wayland
+        - qt5-qtwayland
+        - qt6-qtwayland
+        
+        # Vulkan
+        - vulkan-validation-layers
+        - vulkan-tools
+        
+        # GNOME/GTK
+        - nautilus
+        - gnome-disk-utility
+        - google-noto-emoji-fonts
+        - gnome-shell-extension-pop-shell
+        - network-manager-applet
+        - plymouth-system-theme
+        - system-config-printer
+        - libnotify
+        
+        # File Managers & Tools
         - thunar
         - thunar-archive-plugin
         - thunar-volman
         - xarchiver
-        - imv
-        - slurp
-        - grim
-        - wlr-randr
-        - wlsunset
-        - brightnessctl
-        - swayidle
-        - kanshi
-        - foot
-        - dunst
-        - fontawesome-fonts-all
-        - gnome-themes-extra
-        - gnome-icon-theme
-        - paper-icon-theme
-        - breeze-icon-theme
-        - papirus-icon-theme
-        - river
-        - xdg-desktop-portal-wlr
-        - xdg-desktop-portal-gtk
+        
+        # Other Tools
         - fwupd
         - jmtpfs
-        - globalprotect-openconnect
-        - awesome
-        - xorg-x11-server-Xorg
         - flameshot
-        - niri
         - hunspell-en
         - hunspell-en-US
-        - gtk-murrine-engine
-        - openvpn
-        - dialog
         - python3-pip
-        - i3
-        - zen-twilight
+        - cargo
+        
+        # AGS (might be problematic)
+        - aylurs-gtk-shell
+        
+        # POTENTIALLY PROBLEMATIC - Comment out if build fails
+        - power-profiles-daemon  # conflicts with tuned-ppd
+        - zen-twilight  # From zen-browser COPR - might not be available
+        
     remove:
       packages:
-        - tuned-ppd
+        - tuned-ppd  # Conflicts with power-profiles-daemon
 
   - type: brew
     auto-update: true
@@ -256,7 +292,6 @@ modules:
       - git.sh
       - enablepop.sh
       - post-install.sh
-#      - block-ads.sh
 
   - type: fonts
     fonts:
@@ -276,64 +311,33 @@ modules:
       - dconf-update-service
 
   - type: chezmoi
-    # Installs chezmoi to /usr/bin/chezmoi from latest Github release
-    # () Git repository to initialize
-    repository: "https://github.com/AsirShahid/dotfiles" # Required - Default: n/a  - Expects type: string
-    # Enable the modules services globally for all users
-    all-users: true # Optional - Default: true - Expects type: boolean
-    # Policy for handling file that has changed on disk compared to your repo. Accepts "skip" or "replace"
-    file-conflict-policy: "skip" # Optional - Default: "skip" - Expects type: string
+    repository: "https://github.com/AsirShahid/dotfiles"
+    all-users: true
+    file-conflict-policy: "skip"
 
-#   - type: akmods
-#     base: main # if not specified, classic "main" base is used by default
-#     install:
-#       - framework-laptop
-#       - ryzen-smu
-#       - zenergy
   - type: gschema-overrides
     include:
-      - zz1-myoverride.gschema.override # test & compile the override file included in config/gschema-overrides/zz1-myoverride.gschema.override     #- gcadapter_oc
+      - zz1-myoverride.gschema.override
 
   - type: gnome-extensions
     install:
       - Night Theme Switcher
-      - Blur my Shell # Notice how extension is named "Blur my Shell" & not "Blur My Shell"?
-                          # Name is case-sensitive, so check if extension name is typed correctly
+      - Blur my Shell
       - Bluetooth Battery Meter
-      #- Pano - Clipboard Manager
       - Caffeine
-      #- PaperWM
-      # Clipboard Indicator
-      - 779
-      #- 4245
-      #- "Weather O'Clock"
-      #- Pop Shell
-    #uninstall:
-      #- GSConnect # Uninstall step here should be used only for the extensions
-                      # which are not installed through OS package manager in the base image,
-                      # like extensions installed from gnome-extensions module
+      - 779  # Clipboard Indicator
 
   - type: systemd
     system:
       enabled:
-        #- nix-daemon.service
         - power-profiles-daemon.service
-        #- coolercontrold.service
-        #- example.service # Enabled (runs on system boot)
       disabled: []
-        #- example.target # Disabled (does not run on system boot, unless other unit strictly requires it)
       masked: []
-        #- example.service # Masked (does not run on system boot, under any circumstances)
       unmasked: []
-        #- example.service # Unmasked (runs on system boot, even if previously masked)
     user:
       enabled: []
-        #- example.timer # Enabled (runs for the user)
       disabled: []
-        #- example.service # Disabled (does not run for the user, unless other unit strictly requires it)
       masked: []
-        #- example.service # Masked (does not run for the user, under any circumstances)
       unmasked: []
-        #- example.service # Unmasked (runs for the user, even if previously masked)
 
   - type: signing

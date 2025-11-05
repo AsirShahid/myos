@@ -7,3 +7,5 @@ Icon=/usr/share/icons/beeper.png
 Terminal=false
 Categories=Network;Chat;
 StartupWMClass=Beeper
+StartupNotify=true
+X-AppImage-Integrate=false

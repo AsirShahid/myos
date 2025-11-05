@@ -1,6 +1,5 @@
 # yaml-language-server: $schema=https://schema.blue-build.org/recipe-v1.json
 
-# CLEANED UP VERSION - Duplicates removed, conflicts addressed
 name: myos
 description: This is my personal OS image.
 
@@ -35,8 +34,6 @@ modules:
         - starship
         - helix
         - kitty
-        - alacritty
-        - ptyxis
         - emacs
         
         # System Tools
@@ -81,13 +78,7 @@ modules:
         
         # Cursors and Themes
         - bibata-cursor-themes
-        - fontawesome-fonts-all
-        - gnome-themes-extra
-        - gnome-icon-theme
-        - paper-icon-theme
-        - breeze-icon-theme
         - papirus-icon-theme
-        - gtk-murrine-engine
         
         # VPN
         - mullvad-vpn
@@ -99,7 +90,6 @@ modules:
         # Core Utils (most already in base)
         - coreutils
         - fuzzel
-        - gojq
         - meson
         - typescript
         - gjs
@@ -119,19 +109,8 @@ modules:
         - waypaper
         - waypipe
         
-        # Sway
-        - sway
-        - waybar-git
-        - grimshot
-        - swaylock-effects
-        - swayidle
-        - kanshi
-        
         # Other Window Managers
         - niri
-        - river
-        - awesome
-        - i3
         
         # Wayland Tools
         - grim
@@ -142,7 +121,6 @@ modules:
         - swappy
         - swww
         - rofi-wayland
-        - foot
         - dunst
         - imv
         
@@ -165,13 +143,11 @@ modules:
         - gnome-keyring-pam
         - gnome-keyring  # REMOVED DUPLICATE
         - lxqt-policykit
-        - lxpolkit  # Note: This might conflict with lxqt-policykit
         - polkit
         - pinentry-gnome3
         
         # Desktop Portals & X/Wayland
         - xorg-x11-server-Xwayland  # REMOVED DUPLICATE
-        - xorg-x11-server-Xorg
         - xdg-user-dirs
         - xdg-desktop-portal-gtk  # REMOVED DUPLICATE
         - xdg-desktop-portal-wlr
@@ -305,7 +281,6 @@ modules:
         - Inconsolata
       google-fonts:
         - Roboto
-        - Open Sans
 
   - type: bling
     install:

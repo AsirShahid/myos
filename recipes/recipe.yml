@@ -28,7 +28,8 @@ modules:
         - sneexy/zen-browser
       files:
         - https://repository.mullvad.net/rpm/stable/mullvad.repo
-    install:
+    install:  
+      skip-unavailable: true  # Whether to continue with the install if packages are unavailable
       packages:
         # Editors and Terminal Tools
         - starship
@@ -76,7 +77,6 @@ modules:
         - gtkmm2.4-devel
         - gtkmm3.0-devel
         - gtkmm4.0-devel
-        - gtksourceviewmm
         - cairomm
         
         # Cursors and Themes
@@ -104,6 +104,8 @@ modules:
         - typescript
         - gjs
         - jq
+        - atuin
+        - bash-preexec
         - fzf
         - dialog
         

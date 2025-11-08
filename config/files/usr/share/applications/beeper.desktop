@@ -2,10 +2,9 @@
 Type=Application
 Name=Beeper
 Comment=Beeper: Unified Messenger
-Exec=/usr/bin/beeper --no-sandbox %U
+Exec=/usr/bin/beeper --enable-features=UseOzonePlatform,WaylandWindowDecorations --ozone-platform=wayland --no-sandbox %U
 Icon=/usr/share/icons/beeper.png
 Terminal=false
 Categories=Network;Chat;
 StartupWMClass=Beeper
 StartupNotify=true
-X-AppImage-Integrate=false

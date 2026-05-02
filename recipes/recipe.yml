@@ -302,6 +302,7 @@ modules:
       - Blur my Shell
       - Bluetooth Battery Meter
       - Caffeine
+      - 5278  # Pano - Clipboard Manager
 
   - type: systemd
     system:

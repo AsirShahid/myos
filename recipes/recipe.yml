@@ -302,7 +302,7 @@ modules:
       - Blur my Shell
       - Bluetooth Battery Meter
       - Caffeine
-      - 779  # Clipboard Indicator
+      - 8834  # Copyous - Clipboard Manager
 
   - type: systemd
     system:

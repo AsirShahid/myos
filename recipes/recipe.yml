@@ -195,9 +195,7 @@ modules:
         # AGS (might be problematic)
         - aylurs-gtk-shell
         
-        # POTENTIALLY PROBLEMATIC - Comment out if build fails
         - power-profiles-daemon  # conflicts with tuned-ppd
-        - zen-twilight  # From zen-browser COPR - might not be available
         
     remove:
       packages:
@@ -268,7 +266,6 @@ modules:
     scripts:
       - getsimplex.sh
       - git.sh
-      - enablepop.sh
       - post-install.sh
 
   - type: fonts

@@ -257,6 +257,7 @@ modules:
           - org.chromium.Chromium
           - com.github.wwmm.easyeffects
           - com.github.rafostar.Clapper
+          - com.beeper.Beeper
       - scope: user
         repo:
           name: flathub-user
@@ -265,7 +266,6 @@ modules:
 
   - type: script
     scripts:
-      - getbeeper.sh
       - getsimplex.sh
       - git.sh
       - enablepop.sh

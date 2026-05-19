@@ -1,7 +1,7 @@
 # vim: set ft=make :
 # Custom commands for your Bluefin+Bazzite hybrid
 
-# Your custom AGS dependencies installation
+# Install AGS (Aylur's GTK Shell) runtime dependencies: bun, sass, matugen, and Python color/theme utilities
 ags-deps:
     sudo npm -g install bun
     sudo npm -g install sass

@@ -268,8 +268,8 @@ configure-auto-power-profile ACTION="help":
     OPTION={{ ACTION }}
     if [ "$OPTION" == "help" ]; then
       echo "Usage: ujust configure-auto-power-profile <option>"
-      echo "  Use 'enable' to allow automatic power profile switching based on power state
-      echo "  Use 'disable' to prevent automatic power profile switching based on power state
+      echo "  Use 'enable' to allow automatic power profile switching based on power state"
+      echo "  Use 'disable' to prevent automatic power profile switching based on power state"
       exit 0
     elif [[ "${OPTION,,}" =~ enable ]]; then
       gnome-extensions enable auto-power-profile@dmy3k.github.io
@@ -295,8 +295,9 @@ install-system-flatpaks:
 #configure-grub:
 #    /usr/libexec/configure-grub.sh
 
+# Update system image via bootc, then update flatpaks and brew packages (incompatible with locally layered packages)
 update-ng:
-    echo "Note: This command doesn't work if you have locally layered packages" 
+    echo "Note: This command doesn't work if you have locally layered packages"
     sudo bootc upgrade
     flatpak update -y
     brew upgrade

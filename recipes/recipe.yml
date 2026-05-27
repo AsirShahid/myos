@@ -196,9 +196,6 @@ modules:
         - aylurs-gtk-shell
         
         - power-profiles-daemon  # conflicts with tuned-ppd
-        
-    remove:
-      packages: []
 
   - type: brew
     auto-update: true

@@ -197,6 +197,10 @@ modules:
         
         - power-profiles-daemon  # conflicts with tuned-ppd
 
+    remove:
+      packages:
+        - tuned-ppd  # conflicts with power-profiles-daemon; removed before install
+
   - type: brew
     auto-update: true
     update-interval: '6h'

@@ -198,8 +198,7 @@ modules:
         - power-profiles-daemon  # conflicts with tuned-ppd
         
     remove:
-      packages:
-        - tuned-ppd  # Conflicts with power-profiles-daemon
+      packages: []
 
   - type: brew
     auto-update: true
@@ -263,8 +262,6 @@ modules:
 
   - type: script
     scripts:
-      - getsimplex.sh
-      - git.sh
       - post-install.sh
 
   - type: fonts

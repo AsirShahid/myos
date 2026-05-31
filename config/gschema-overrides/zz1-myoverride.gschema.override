@@ -6,13 +6,10 @@ enabled-extensions = ['appindicatorsupport@rgcjonas.gmail.com', 'gsconnect@andyh
 
 [org.gnome.desktop.peripherals.touchpad]
 tap-to-click=true
+natural-scroll=false
 
 [org.gnome.settings-daemon.plugins.power]
 power-button-action='interactive'
-
-[org.gnome.desktop.peripherals.touchpad]
-tap-to-click = true
-natural-scroll = false
 
 [org.gnome.mutter]
 check-alive-timeout=uint32 20000

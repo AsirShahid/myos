@@ -125,12 +125,12 @@ modules:
         - imv
         
         # Audio/Video
-        - pavucontrol  # REMOVED DUPLICATE
+        - pavucontrol
         - pulseaudio-utils
         - pipewire
         - wireplumber
         - pamixer
-        - playerctl  # REMOVED DUPLICATE
+        - playerctl
         
         # Bluetooth
         - bluez
@@ -141,15 +141,15 @@ modules:
         # Authentication
         - fprintd-pam
         - gnome-keyring-pam
-        - gnome-keyring  # REMOVED DUPLICATE
+        - gnome-keyring
         - lxqt-policykit
         - polkit
         - pinentry-gnome3
         
         # Desktop Portals & X/Wayland
-        - xorg-x11-server-Xwayland  # REMOVED DUPLICATE
+        - xorg-x11-server-Xwayland
         - xdg-user-dirs
-        - xdg-desktop-portal-gtk  # REMOVED DUPLICATE
+        - xdg-desktop-portal-gtk
         - xdg-desktop-portal-wlr
         
         # D-Bus

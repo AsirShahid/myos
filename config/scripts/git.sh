@@ -5,9 +5,8 @@
 # builds actually ran successfully without any errors!
 set -oue pipefail
 
-# Your code goes here.
-echo 'This is an example shell script'
-echo 'Scripts here will run during build if specified in recipe.yml'
+# Set a default global git identity in the image.
+echo 'Configuring global git identity...'
 
 git config --global user.email "asirshahid@protonmail.com"
 git config --global user.name "Asir Shahid"

@@ -5,9 +5,8 @@
 # builds actually ran successfully without any errors!
 set -oue pipefail
 
-# Your code goes here.
-echo 'This is an example shell script'
-echo 'Scripts here will run during build if specified in recipe.yml'
+# Download the latest SimpleX Chat desktop AppImage and install it as /usr/bin/simplex.
+echo 'Downloading SimpleX Chat...'
 wget https://github.com/simplex-chat/simplex-chat/releases/latest/download/simplex-desktop-x86_64.AppImage
 chmod a+x simplex-desktop-x86_64.AppImage
 mv simplex-desktop-x86_64.AppImage simplex

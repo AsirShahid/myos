@@ -5,8 +5,7 @@
 # builds actually ran successfully without any errors!
 set -oue pipefail
 
-# Your code goes here.
-echo 'This is an example shell script'
-echo 'Scripts here will run during build if specified in recipe.yml'
+# Install the Nix package manager in multi-user (daemon) mode.
+echo 'Installing Nix...'
 sh <(curl -L https://nixos.org/nix/install) --daemon
 echo 'Nix installed'

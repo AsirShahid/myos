@@ -5,9 +5,9 @@
 # builds actually ran successfully without any errors!
 set -oue pipefail
 
-# Your code goes here.
-echo 'This is an example shell script'
-echo 'Scripts here will run during build if specified in recipe.yml'
+# Install the build/runtime dependencies for AGS (Aylur's GTK Shell):
+# JS tooling, the matugen color generator, and the Material You Python libs.
+echo 'Installing AGS dependencies...'
 sudo npm -g install bun
 #curl -fsSL https://bun.sh/install | bash
 sudo npm -g install sass

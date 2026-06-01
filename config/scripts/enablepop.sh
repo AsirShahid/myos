@@ -5,7 +5,6 @@
 # builds actually ran successfully without any errors!
 set -oue pipefail
 
-# Your code goes here.
-echo 'This is an example shell script'
-echo 'Scripts here will run during build if specified in recipe.yml'
+# Enable the Pop Shell GNOME extension.
+echo 'Enabling pop-shell GNOME extension...'
 gnome-extensions enable pop-shell@system76.com

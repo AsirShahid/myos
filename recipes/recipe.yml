@@ -190,6 +190,7 @@ modules:
         - hunspell-en-US
         - python3-pip
         - cargo
+        - fuse-libs  # libfuse.so.2 for the SimpleX AppImage (/usr/bin/simplex)
 
         # claude-cowork-linux dependencies
         - nodejs
@@ -270,7 +271,7 @@ modules:
   - type: script
     scripts:
       - getsimplex.sh
-      - git.sh
+      - getbeeper.sh
       - getclaude-cowork.sh
       - post-install.sh
 

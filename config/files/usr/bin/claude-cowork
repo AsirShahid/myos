@@ -41,6 +41,12 @@ fi
 
 cd "$DEST"
 
+# --doctor is handled by install.sh only (launch.sh takes no flags), and it
+# works both before and after install, so route it there explicitly.
+if [[ "${1:-}" == "--doctor" ]]; then
+  exec ./install.sh --doctor
+fi
+
 # First run: extract & patch Claude Desktop into the user's home. install.sh
 # prompts before downloading the proprietary DMG; pass --force to skip it.
 if [[ ! -d "$DEST/linux-app-extracted" ]]; then

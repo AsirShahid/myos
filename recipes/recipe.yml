@@ -190,6 +190,13 @@ modules:
         - hunspell-en-US
         - python3-pip
         - cargo
+
+        # claude-cowork-linux dependencies
+        - nodejs
+        - npm
+        - p7zip
+        - p7zip-plugins
+        - bubblewrap
         
         # AGS (might be problematic)
         - aylurs-gtk-shell
@@ -264,6 +271,7 @@ modules:
     scripts:
       - getsimplex.sh
       - git.sh
+      - getclaude-cowork.sh
       - post-install.sh
 
   - type: fonts

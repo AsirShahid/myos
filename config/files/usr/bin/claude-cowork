@@ -1,0 +1,53 @@
+#!/usr/bin/env bash
+#
+# claude-cowork launcher for immutable (ostree) systems.
+#
+# The image ships the claude-cowork-linux source read-only under /usr/share.
+# Its upstream install/launch flow writes into the working tree and the user's
+# home and downloads Anthropic's proprietary Claude Desktop at runtime, so we
+# mirror the source into a writable per-user copy and drive it from there
+# (the same strategy the upstream Nix flake uses).
+#
+# Usage:
+#   claude-cowork                first run downloads & patches Claude Desktop,
+#                                subsequent runs launch it
+#   claude-cowork --force        skip the download confirmation prompt
+#   claude-cowork --doctor       run upstream preflight diagnostics
+#   claude-cowork --reinstall    wipe the per-user copy and re-run install
+#
+set -euo pipefail
+
+SRC=/usr/share/claude-cowork-linux
+DEST="${XDG_DATA_HOME:-$HOME/.local/share}/claude-cowork-linux"
+
+if [[ ! -d "$SRC" ]]; then
+  echo "claude-cowork: $SRC not found; this image was not built with claude-cowork-linux." >&2
+  exit 1
+fi
+
+if [[ "${1:-}" == "--reinstall" ]]; then
+  shift
+  rm -rf "$DEST"
+fi
+
+# Mirror the read-only source into a writable per-user copy. Preserve the
+# user's extracted app and patches (linux-app-extracted/) across image updates.
+mkdir -p "$DEST"
+if command -v rsync >/dev/null 2>&1; then
+  rsync -a --exclude 'linux-app-extracted' "$SRC"/ "$DEST"/
+else
+  cp -rn "$SRC"/. "$DEST"/ 2>/dev/null || cp -r "$SRC"/. "$DEST"/
+fi
+
+cd "$DEST"
+
+# First run: extract & patch Claude Desktop into the user's home. install.sh
+# prompts before downloading the proprietary DMG; pass --force to skip it.
+if [[ ! -d "$DEST/linux-app-extracted" ]]; then
+  echo "claude-cowork: first run — installing Claude Desktop into your home."
+  echo "claude-cowork: this downloads Anthropic's proprietary Claude Desktop DMG."
+  exec ./install.sh "$@"
+fi
+
+# Already installed: launch (launch.sh repacks the asar if stubs changed).
+exec ./launch.sh "$@"

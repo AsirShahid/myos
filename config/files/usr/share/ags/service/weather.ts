@@ -18,7 +18,7 @@ class Weather extends Service {
             params: {
                 id: placeid,
                 appid: key.value,
-                untis: unit.value,
+                units: unit.value,
             },
         })
         return await res.json()

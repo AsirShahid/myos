@@ -198,6 +198,11 @@ modules:
       - getbeeper.sh
       - getclaude-cowork.sh
 
+  # Validates config/justfiles/*.just at build time and imports them into
+  # ujust via /usr/share/ublue-os/just/60-custom.just.
+  - type: justfiles
+    validate: true
+
   - type: fonts
     fonts:
       nerd-fonts:

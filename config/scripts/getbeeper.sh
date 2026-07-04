@@ -22,4 +22,9 @@ curl -fL -o /tmp/beeper.AppImage \
 echo "${BEEPER_SHA256}  /tmp/beeper.AppImage" | sha256sum -c -
 install -m 0755 /tmp/beeper.AppImage /usr/bin/beeper
 rm -f /tmp/beeper.AppImage
+
+# Record the baked version so `ujust beeper-version` can compare with upstream.
+mkdir -p /usr/share/myos
+echo "${BEEPER_VERSION}" > /usr/share/myos/beeper-version
+
 echo 'Beeper installation completed'

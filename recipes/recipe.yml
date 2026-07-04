@@ -201,6 +201,7 @@ modules:
       - getbeeper.sh
       - getclaude-cowork.sh
       - getclaude-science.sh
+      - getmodal.sh
 
   # Validates config/justfiles/*.just at build time and imports them into
   # ujust via /usr/share/ublue-os/just/60-custom.just.

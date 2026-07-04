@@ -15,195 +15,121 @@ modules:
     repos:
       copr:
         - atim/starship
-        - solopasha/hyprland
-        - ublue-os/staging
-        - kylegospo/bazzite-multilib
-        - kylegospo/bazzite
-        - peterwu/rendezvous
         - yuezk/globalprotect-openconnect
         - yalter/niri
-        - ryanabx/cosmic-epoch
-        - wiiznokes/cosmic-applets-unofficial
-        - sneexy/zen-browser
       files:
         - https://repository.mullvad.net/rpm/stable/mullvad.repo
-    install:  
-      skip-unavailable: true  # Whether to continue with the install if packages are unavailable
+    install:
+      # Fail the build if a package can't be found, instead of silently
+      # shipping an image without it.
+      skip-unavailable: false
       packages:
         # Editors and Terminal Tools
-        - starship
+        - starship  # copr: atim/starship
         - helix
         - kitty
         - emacs
-        
+
         # System Tools
         - timeshift
         - gnome-boxes
         - kdeconnectd
         - antimicrox
         - cliphist
-        
+
         # Document Viewers
         - zathura
         - zathura-pdf-mupdf
         - zathura-ps
         - zathura-djvu
-        
-        # Development Libraries
-        - openssl-devel
-        - libgda
-        - libgda-sqlite
-        - zlib-devel
-        - libjpeg-turbo-devel
-        - python3-devel
-        - libpng-devel
-        - libtiff-devel
-        - freetype-devel
-        - lcms2-devel
-        - libwebp-devel
-        - wireplumber-devel
-        - libdbusmenu-gtk3-devel
-        - playerctl-devel
-        - gtk-layer-shell-devel
-        - upower-devel
-        - upower
-        - libtool
-        - libtool-ltdl
-        - libtool-ltdl-devel
-        - tinyxml2
-        - gtkmm2.4-devel
-        - gtkmm3.0-devel
-        - gtkmm4.0-devel
-        - cairomm
-        
-        # Cursors and Themes
-        - bibata-cursor-themes
+
+        # Icon Themes
         - papirus-icon-theme
-        
+
         # VPN
-        - mullvad-vpn
-        - globalprotect-openconnect
+        - mullvad-vpn  # repo: mullvad.repo
+        - globalprotect-openconnect  # copr: yuezk/globalprotect-openconnect
         - openvpn
         - NetworkManager-openvpn
         - NetworkManager-openconnect
-        
-        # Core Utils (most already in base)
-        - coreutils
-        - fuzzel
-        - meson
-        - typescript
-        - gjs
+
+        # CLI Utilities
         - jq
         - atuin
         - fzf
         - dialog
-        
-        # Hyprland Ecosystem
-        - hyprpaper
-        - hyprpicker
-        - hyprshot
-        - pyprland
-        - hyprcursor
-        - xdg-desktop-portal-hyprland
-        - waypaper
-        - waypipe
-        
-        # Other Window Managers
-        - niri
-        
+
+        # Window Managers
+        - niri  # copr: yalter/niri
+
         # Wayland Tools
+        - fuzzel
         - grim
         - slurp
         - wlr-randr
         - wlsunset
         - brightnessctl
         - swappy
-        - swww
-        - rofi-wayland
         - dunst
         - imv
-        
+        - waypipe
+        - wl-clipboard
+
         # Audio/Video
-        - pavucontrol  # REMOVED DUPLICATE
+        - pavucontrol
         - pulseaudio-utils
-        - pipewire
-        - wireplumber
         - pamixer
-        - playerctl  # REMOVED DUPLICATE
-        
+        - playerctl
+
         # Bluetooth
-        - bluez
         - bluez-tools
         - blueman
-        - bolt
-        
+
         # Authentication
         - fprintd-pam
         - gnome-keyring-pam
-        - gnome-keyring  # REMOVED DUPLICATE
         - lxqt-policykit
-        - polkit
         - pinentry-gnome3
-        
-        # Desktop Portals & X/Wayland
-        - xorg-x11-server-Xwayland  # REMOVED DUPLICATE
-        - xdg-user-dirs
-        - xdg-desktop-portal-gtk  # REMOVED DUPLICATE
+
+        # Desktop Portals (wlroots portal for niri)
         - xdg-desktop-portal-wlr
-        
-        # D-Bus
-        - dbus-tools
-        - dbus-daemon
-        
-        # Clipboard
-        - wl-clipboard
-        
+
         # Qt Wayland
         - qt5-qtwayland
         - qt6-qtwayland
-        
+
         # Vulkan
         - vulkan-validation-layers
         - vulkan-tools
-        
+
         # GNOME/GTK
-        - nautilus
         - gnome-disk-utility
         - google-noto-emoji-fonts
         - gnome-shell-extension-pop-shell
         - network-manager-applet
-        - plymouth-system-theme
         - system-config-printer
-        - libnotify
-        
+
         # File Managers & Tools
-        - thunar
+        - Thunar
         - thunar-archive-plugin
         - thunar-volman
         - xarchiver
-        
+
         # Other Tools
-        - fwupd
         - jmtpfs
         - flameshot
         - hunspell-en
         - hunspell-en-US
-        - python3-pip
-        - cargo
-        - fuse-libs  # libfuse.so.2 for the SimpleX AppImage (/usr/bin/simplex)
+        - fuse-libs  # libfuse.so.2 for the Beeper AppImage (/usr/bin/beeper)
 
         # claude-cowork-linux dependencies
         - nodejs
         - npm
-        - p7zip
-        - p7zip-plugins
+        - 7zip  # ships /usr/bin/7z; replaced p7zip in Fedora
         - bubblewrap
-        
-        # AGS (might be problematic)
-        - aylurs-gtk-shell
-        
-        - power-profiles-daemon  # conflicts with tuned-ppd
-        
+
+        - power-profiles-daemon  # conflicts with tuned-ppd (removed below)
+
     remove:
       packages:
         - tuned-ppd  # Conflicts with power-profiles-daemon
@@ -238,7 +164,6 @@ modules:
           - com.vysp3r.ProtonPlus
           - net.davidotek.pupgui2
           - net.codelogistics.webapps
-          - com.quexten.Goldwarden
           - com.bitwarden.desktop
           - org.telegram.desktop
           - com.slack.Slack
@@ -270,10 +195,13 @@ modules:
 
   - type: script
     scripts:
-      - getsimplex.sh
       - getbeeper.sh
       - getclaude-cowork.sh
-      - post-install.sh
+
+  # Validates config/justfiles/*.just at build time and imports them into
+  # ujust via /usr/share/ublue-os/just/60-custom.just.
+  - type: justfiles
+    validate: true
 
   - type: fonts
     fonts:
@@ -288,7 +216,6 @@ modules:
 
   - type: bling
     install:
-      - 1password
       - dconf-update-service
 
   - type: chezmoi
@@ -312,13 +239,5 @@ modules:
     system:
       enabled:
         - power-profiles-daemon.service
-      disabled: []
-      masked: []
-      unmasked: []
-    user:
-      enabled: []
-      disabled: []
-      masked: []
-      unmasked: []
 
   - type: signing

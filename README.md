@@ -1,8 +1,26 @@
 # myos &nbsp; [![build-ublue](https://github.com/asirshahid/myos/actions/workflows/build.yml/badge.svg)](https://github.com/asirshahid/myos/actions/workflows/build.yml)
 
-See the [BlueBuild docs](https://blue-build.org/how-to/setup/) for quick setup instructions for setting up your own repository based on this template.
+My personal OS image, built with [BlueBuild](https://blue-build.org/) on top of
+[Bluefin DX](https://projectbluefin.io/). On top of the base it adds:
 
-After setup, it is recommended you update this README to describe your custom image.
+- **niri** (scrollable-tiling Wayland compositor) plus wlroots tooling
+  (fuzzel, grim/slurp, dunst, swappy, …) alongside the stock GNOME desktop
+- **GNOME tweaks**: pop-shell tiling, Blur my Shell, Night Theme Switcher,
+  Caffeine, Bluetooth Battery Meter, and Copyous, enabled via gschema override
+- **VPNs**: Mullvad, GlobalProtect (openconnect), and OpenVPN/OpenConnect
+  NetworkManager plugins
+- **Apps**: a Flathub set (Steam, Obsidian, Bitwarden, LibreOffice, Discord,
+  Telegram, Element, …), [Beeper](https://www.beeper.com/) (pinned AppImage),
+  and [claude-cowork-linux](https://github.com/johnzfitch/claude-cowork-linux)
+  via the `/usr/bin/claude-cowork` launcher
+- **CLI**: starship, helix, kitty, emacs, atuin, fzf, Nerd Fonts, and Homebrew
+  with automatic updates
+- Dotfiles applied for all users with
+  [chezmoi](https://github.com/AsirShahid/dotfiles), and
+  `power-profiles-daemon` in place of tuned-ppd
+
+Images build daily at 17:00 UTC via GitHub Actions and are pushed to
+`ghcr.io/asirshahid/myos`.
 
 ## Installation
 
@@ -28,7 +46,11 @@ To rebase an existing atomic Fedora installation to the latest build:
   systemctl reboot
   ```
 
-The `latest` tag will automatically point to the latest build. That build will still always use the Fedora version specified in `recipe.yml`, so you won't get accidentally updated to the next major version.
+The `latest` tag always points to the latest build. Note that the recipe
+tracks `bluefin-dx:latest`, which follows the latest stable Fedora release —
+so major Fedora upgrades happen automatically. Pin `image-version` in
+`recipes/recipe.yml` (e.g. to `gts` or a release number) if you want to
+control major upgrades manually.
 
 ## ISO
 

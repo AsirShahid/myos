@@ -25,3 +25,17 @@ beeper-version:
     if [ -n "${latest}" ] && [ "${baked}" != "${latest}" ]; then
         echo "Update available: bump BEEPER_VERSION and BEEPER_SHA256 in config/scripts/getbeeper.sh"
     fi
+
+# Show the claude-science version baked into this image vs the latest upstream
+claude-science-version:
+    #!/usr/bin/env bash
+    set -euo pipefail
+    baked="$(cat /usr/share/myos/claude-science-version 2>/dev/null || echo unknown)"
+    base="https://storage.googleapis.com/operon-dist-cf94a20e-f71c-413c-bd00-9e12b1fedf59/operon-releases"
+    sha8="$(curl -sf "$base/stable" || true)"
+    latest="$(curl -sf "$base/${sha8}/manifest.json" 2>/dev/null | jq -r '.version // empty' 2>/dev/null || true)"
+    echo "baked in image: ${baked}"
+    echo "latest stable:  ${latest:-unknown (offline?)}"
+    if [ -n "${latest}" ] && [ "${baked}" != "${latest}" ]; then
+        echo "Update available: bump SCIENCE_SHA8/SCIENCE_VERSION/SCIENCE_SHA256 in config/scripts/getclaude-science.sh"
+    fi

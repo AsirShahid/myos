@@ -128,6 +128,9 @@ modules:
         - 7zip  # ships /usr/bin/7z; replaced p7zip in Fedora
         - bubblewrap
 
+        # claude-science dependencies (also uses bubblewrap, above)
+        - socat  # claude-science sandbox networking (cli/src/sandbox/socat.ts)
+
         - power-profiles-daemon  # conflicts with tuned-ppd (removed below)
 
     remove:
@@ -197,6 +200,7 @@ modules:
     scripts:
       - getbeeper.sh
       - getclaude-cowork.sh
+      - getclaude-science.sh
 
   # Validates config/justfiles/*.just at build time and imports them into
   # ujust via /usr/share/ublue-os/just/60-custom.just.

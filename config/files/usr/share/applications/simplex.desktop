@@ -1,8 +1,0 @@
-[Desktop Entry]
-Type=Application
-Name=SimpleX
-Comment=SimpleX Chat, the first messaging network operating without user identifiers of any kind
-Exec=/usr/bin/simplex --no-sandbox %U
-Icon=/usr/share/icons/simplex.png
-Terminal=false
-Categories=Network;Chat;

@@ -9,6 +9,12 @@ on:
       
   pull_request:
   workflow_dispatch: # allow manually triggering builds
+
+# don't let a push race the scheduled build; newest run wins
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   bluebuild:
     name: Build Custom Image

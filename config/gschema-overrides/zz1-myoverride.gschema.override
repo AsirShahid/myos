@@ -1,8 +1,10 @@
 # GNOME shell modifications
 [org.gnome.shell]
-#favorite-apps = ['org.gnome.Nautilus.desktop', 'org.mozilla.firefox.desktop', 'org.gnome.Terminal.desktop']
-#enabled-extensions = ['appindicatorsupport@rgcjonas.gmail.com', 'gsconnect@andyholmes.github.io', 'gamemode@christian.kellner.me', 'just-perfection-desktop@just-perfection', 'user-theme@gnome-shell-extensions.gcampax.github.com', 'blur-my-shell@aunetx', 'pip-on-top@rafostar.github.com', 'pano@elhan.io', 'undecorate@sun.wxg@gmail.com', 'Vitals@CoreCoding.com', 'burn-my-windows@schneegans.github.com', 'dash-to-dock@micxgx.gmail.com', 'desktop-cube@schneegans.github.com', 'compiz-windows-effect@hermes83.github.com', 'quick-settings-tweaks@qwreey', 'useless-gaps@pimsnel.com', 'rounded-window-corners@yilozt', 'compiz-alike-magic-lamp-effect@hermes83.github.com', 'azwallpaper@azwallpaper.gitlab.com', 'openweather-extension@jenslody.de']
-enabled-extensions = ['appindicatorsupport@rgcjonas.gmail.com', 'gsconnect@andyholmes.github.io', 'user-theme@gnome-shell-extensions.gcampax.github.com', 'blur-my-shell@aunetx', 'openweather-extension@penguin-teal.github.io', 'launch-new-instance@gnome-shell-extensions.gcampax.github.com', 'pop-shell@system76.com']
+# Keep this list in sync with the extensions actually present in the image:
+# appindicator + user-theme + launch-new-instance ship with the Bluefin base,
+# pop-shell comes from the gnome-shell-extension-pop-shell rpm, and the rest
+# are installed by the gnome-extensions module in recipe.yml.
+enabled-extensions = ['appindicatorsupport@rgcjonas.gmail.com', 'user-theme@gnome-shell-extensions.gcampax.github.com', 'launch-new-instance@gnome-shell-extensions.gcampax.github.com', 'pop-shell@system76.com', 'blur-my-shell@aunetx', 'nightthemeswitcher@romainvigier.fr', 'caffeine@patapon.info', 'Bluetooth-Battery-Meter@maniacx.github.com', 'copyous@boerdereinar.dev']
 
 [org.gnome.desktop.peripherals.touchpad]
 tap-to-click=true

@@ -39,3 +39,15 @@ claude-science-version:
     if [ -n "${latest}" ] && [ "${baked}" != "${latest}" ]; then
         echo "Update available: bump SCIENCE_SHA8/SCIENCE_VERSION/SCIENCE_SHA256 in config/scripts/getclaude-science.sh"
     fi
+
+# Show the modal CLI version baked into this image vs the latest on PyPI
+modal-version:
+    #!/usr/bin/env bash
+    set -euo pipefail
+    baked="$(cat /usr/share/myos/modal-version 2>/dev/null || echo unknown)"
+    latest="$(curl -sf https://pypi.org/pypi/modal/json | jq -r '.info.version // empty' 2>/dev/null || true)"
+    echo "baked in image: ${baked}"
+    echo "latest on PyPI: ${latest:-unknown (offline?)}"
+    if [ -n "${latest}" ] && [ "${baked}" != "${latest}" ]; then
+        echo "Update available: bump MODAL_VERSION in config/scripts/getmodal.sh"
+    fi

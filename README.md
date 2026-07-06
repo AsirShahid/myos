@@ -13,6 +13,8 @@ My personal OS image, built with [BlueBuild](https://blue-build.org/) on top of
   Telegram, Element, …), [Beeper](https://www.beeper.com/) (pinned AppImage),
   and [claude-cowork-linux](https://github.com/johnzfitch/claude-cowork-linux)
   via the `/usr/bin/claude-cowork` launcher
+- **Waydroid** for Android apps, with Bazzite's setup recipe
+  (`ujust setup-waydroid`) and firewalld networking fix baked in
 - **CLI**: starship, helix, kitty, emacs, atuin, fzf, Nerd Fonts, and Homebrew
   with automatic updates
 - Dotfiles applied for all users with

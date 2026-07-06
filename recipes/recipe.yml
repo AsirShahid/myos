@@ -17,6 +17,7 @@ modules:
         - atim/starship
         - yuezk/globalprotect-openconnect
         - yalter/niri
+        - solopasha/hyprland  # hyprlock/hypridle (also source of hypr* tools already in the image)
       files:
         - https://repository.mullvad.net/rpm/stable/mullvad.repo
     install:
@@ -61,6 +62,12 @@ modules:
 
         # Window Managers
         - niri  # copr: yalter/niri
+
+        # Niri session extras (session configs live in dotfiles:
+        # ~/.config/niri, ~/.config/hypr/hypr{lock,idle}.conf, ~/.config/swaync)
+        - hyprlock  # copr: solopasha/hyprland
+        - hypridle  # copr: solopasha/hyprland
+        - SwayNotificationCenter  # swaync: notification daemon + control center
 
         # Wayland Tools
         - fuzzel

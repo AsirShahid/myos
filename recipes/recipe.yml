@@ -69,6 +69,12 @@ modules:
         - hypridle  # copr: solopasha/hyprland
         - SwayNotificationCenter  # swaync: notification daemon + control center
 
+        # AGS v2 desktop shell (bar/quick-settings/notifications, ~/.config/ags).
+        # niri-shell script prefers it over waybar+swaync once present.
+        - aylurs-gtk-shell2  # ags CLI + runtime; copr: solopasha/hyprland
+        - astal-gtk4  # copr: solopasha/hyprland
+        - astal-libs  # Astal{Battery,Network,Bluetooth,Mpris,Notifd,Tray,Wp,…} typelibs
+
         # Wayland Tools
         - fuzzel
         - grim

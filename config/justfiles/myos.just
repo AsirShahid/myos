@@ -51,3 +51,16 @@ modal-version:
     if [ -n "${latest}" ] && [ "${baked}" != "${latest}" ]; then
         echo "Update available: bump MODAL_VERSION in config/scripts/getmodal.sh"
     fi
+
+# Show the Windscribe version baked into this image vs the latest GitHub release
+windscribe-version:
+    #!/usr/bin/env bash
+    set -euo pipefail
+    baked="$(rpm -q --queryformat '%{VERSION}' windscribe 2>/dev/null || echo unknown)"
+    latest="$(curl -sf https://api.github.com/repos/Windscribe/Desktop-App/releases/latest \
+        | jq -r '.tag_name // empty' 2>/dev/null | sed 's/^v//' || true)"
+    echo "baked in image: ${baked}"
+    echo "latest release: ${latest:-unknown (offline?)}"
+    if [ -n "${latest}" ] && [ "${baked}" != "${latest}" ]; then
+        echo "Update available: bump the windscribe RPM URL (v${latest}) in recipes/recipe.yml"
+    fi

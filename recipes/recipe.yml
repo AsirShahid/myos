@@ -59,6 +59,7 @@ modules:
         - atuin
         - fzf
         - dialog
+        - gh  # GitHub CLI
 
         # Window Managers
         - niri  # copr: yalter/niri

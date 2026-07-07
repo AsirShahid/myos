@@ -64,3 +64,51 @@ windscribe-version:
     if [ -n "${latest}" ] && [ "${baked}" != "${latest}" ]; then
         echo "Update available: bump the windscribe RPM URL (v${latest}) in recipes/recipe.yml"
     fi
+
+alias configure-windscribe := setup-windscribe
+
+# Guided Windscribe VPN control (login / connect with kill-switch / disconnect)
+setup-windscribe ACTION="":
+    #!/usr/bin/bash
+    OPTION={{ ACTION }}
+    if [ "$OPTION" == "help" ]; then
+      echo "Usage: ujust setup-windscribe <option>"
+      echo "  <option>: skip the menu with a quick action"
+      echo "  Use 'login'      to sign in to your Windscribe account"
+      echo "  Use 'connect'    to turn the kill-switch on and connect to the best server"
+      echo "  Use 'disconnect' to disconnect (kill-switch stays on)"
+      echo "  Use 'killswitch' to turn the firewall kill-switch on or off"
+      echo "  Use 'status'     to show the current connection"
+      exit 0
+    elif [ "$OPTION" == "" ]; then
+      echo "Windscribe VPN"
+      OPTION=$(gum choose "Connect (kill-switch + best server)" "Disconnect" "Log in" "Toggle kill-switch" "Status")
+    fi
+    # The GUI and CLI both drive this privileged daemon; make sure it's running
+    # (it's enabled in the image, but may not be started yet right after install).
+    if ! systemctl is-active --quiet windscribe-helper; then
+      echo "Starting windscribe-helper..."
+      sudo systemctl start windscribe-helper
+    fi
+    # windscribe-cli talks to that root helper, so the calls below need no sudo.
+    if [[ "${OPTION,,}" =~ ^log ]]; then
+      windscribe-cli login
+    elif [[ "${OPTION,,}" =~ ^disconnect ]]; then
+      windscribe-cli disconnect
+      echo "Disconnected. Kill-switch is still on; run 'ujust setup-windscribe killswitch' to turn it off."
+    elif [[ "${OPTION,,}" =~ connect ]]; then
+      # Heuristic: Windscribe prints a 'login' hint when unauthenticated.
+      if windscribe-cli status 2>&1 | grep -qiE 'login|not logged'; then
+        echo "Not logged in yet."
+        windscribe-cli login
+      fi
+      windscribe-cli firewall on   # kill-switch first, so there's no leak before the tunnel is up
+      windscribe-cli connect best
+      windscribe-cli status
+    elif [[ "${OPTION,,}" =~ (killswitch|firewall|toggle) ]]; then
+      STATE=$(gum choose "on" "off")
+      windscribe-cli firewall "$STATE"
+      echo "Kill-switch turned ${STATE}."
+    elif [[ "${OPTION,,}" =~ ^status ]]; then
+      windscribe-cli status
+    fi

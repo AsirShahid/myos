@@ -53,6 +53,13 @@ modules:
         - openvpn
         - NetworkManager-openvpn
         - NetworkManager-openconnect
+        # Windscribe (GUI + windscribe-cli). No upstream dnf repo, so install the
+        # version-pinned Fedora RPM straight from GitHub. dnf treats it as an
+        # @commandline package and skips the vendor-signature gpg check with a
+        # warning, so no no-gpgchecks needed. Ships windscribe-helper.service,
+        # enabled via the systemd module below. Bump both version numbers in the
+        # URL to update; `ujust windscribe-version` flags when a newer one exists.
+        - https://github.com/Windscribe/Desktop-App/releases/download/v2.23.11/windscribe_2.23.11_amd64_fedora.rpm
 
         # CLI Utilities
         - jq
@@ -156,21 +163,6 @@ modules:
     remove:
       packages:
         - tuned-ppd  # Conflicts with power-profiles-daemon
-
-  # Windscribe VPN (GUI app + `windscribe-cli`). Upstream ships no dnf repo, only
-  # per-release Fedora RPMs on GitHub, so we install a version-pinned RPM straight
-  # from the release asset (that pin is what stops a rebuild silently pulling a
-  # new build). It drops the app under /opt/windscribe and a privileged
-  # windscribe-helper.service (firewall / kill-switch daemon) that is enabled via
-  # the systemd module below. Kept in its own dnf block with no-gpgchecks so
-  # skipping Windscribe's vendor signature does NOT weaken gpg verification for
-  # the Fedora / COPR / Mullvad packages above. To update: bump both version
-  # numbers in the URL below; `ujust windscribe-version` flags when one exists.
-  - type: dnf
-    install:
-      no-gpgchecks: true
-      packages:
-        - https://github.com/Windscribe/Desktop-App/releases/download/v2.23.11/windscribe_2.23.11_amd64_fedora.rpm
 
   - type: brew
     auto-update: true

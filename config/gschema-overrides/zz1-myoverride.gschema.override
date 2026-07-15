@@ -22,3 +22,5 @@ sigma=5
 [org.gnome.desktop.interface]
 color-scheme='prefer-dark'
 icon-theme='Adwaita'
+# Bibata-Modern-Ice XCursor theme shipped by config/scripts/getbibata-cursor.sh.
+cursor-theme='Bibata-Modern-Ice'

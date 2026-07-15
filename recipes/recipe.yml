@@ -275,6 +275,7 @@ modules:
   - type: script
     scripts:
       - getbeeper.sh
+      - getbibata-cursor.sh
       - getclaude-cowork.sh
       - getclaude-science.sh
       - getmodal.sh

@@ -217,6 +217,55 @@ modules:
           - org.chromium.Chromium
           - com.github.wwmm.easyeffects
           - com.github.rafostar.Clapper
+          # --- Reconciled from the live system 2026-07-15 (apps installed
+          #     post-provision). A few GNOME/KDE utilities may already ship in
+          #     the bluefin-dx base; listing them is idempotent/harmless. ---
+          - app.zen_browser.zen
+          - chat.simplex.simplex
+          - com.github.Matoking.protontricks
+          - com.github.PintaProject.Pinta
+          - com.github.zocker_160.SyncThingy
+          - com.obsproject.Studio
+          - com.protonvpn.www
+          - com.quexten.Goldwarden
+          - com.ranfdev.DistroShelf
+          - com.spotify.Client
+          - com.system76.Popsicle
+          - com.wireframesketcher.WireframeSketcher
+          - de.haeckerfelix.Fragments
+          - io.github.dvlv.boxbuddyrs
+          - io.github.kolunmi.Bazaar
+          - io.mgba.mGBA
+          - io.missioncenter.MissionCenter
+          - network.loki.Session
+          - org.altlinux.Tuner
+          - org.azahar_emu.Azahar
+          - org.fedoraproject.MediaWriter
+          - org.gnome.Calculator
+          - org.gnome.Calendar
+          - org.gnome.Characters
+          - org.gnome.clocks
+          - org.gnome.Contacts
+          - org.gnome.Evince
+          - org.gnome.font-viewer
+          - org.gnome.gThumb
+          - org.gnome.Logs
+          - org.gnome.NautilusPreviewer
+          - org.gnome.OfficeRunner
+          - org.gnome.Papers
+          - org.gnome.seahorse.Application
+          - org.gnome.Snapshot
+          - org.gnome.TextEditor
+          - org.gnome.Weather
+          - org.gnome.World.PikaBackup
+          - org.kde.filelight
+          - org.kde.gwenview
+          - org.kde.haruna
+          - org.kde.isoimagewriter
+          - org.mozilla.thunderbird_esr
+          - org.onlyoffice.desktopeditors
+          - org.videolan.VLC
+          - us.zoom.Zoom
       - scope: user
         repo:
           name: flathub-user

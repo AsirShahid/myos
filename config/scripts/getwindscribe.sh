@@ -27,4 +27,8 @@ echo "${WINDSCRIBE_SHA256}  /tmp/windscribe.rpm" | sha256sum -c -
 dnf install -y /tmp/windscribe.rpm
 rm -f /tmp/windscribe.rpm
 
+# Fail the build if the package didn't actually land (e.g. an unmet dependency
+# that dnf only warned about), instead of shipping without it.
+rpm -q windscribe
+
 echo 'Windscribe installation completed'

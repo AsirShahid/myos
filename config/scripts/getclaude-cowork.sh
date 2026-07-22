@@ -33,16 +33,21 @@ echo 'Staging claude-cowork-linux...'
 DEPS_DIR=/usr/lib/claude-cowork-deps
 ( cd "$DEPS_DIR" && npm ci --no-audit --no-fund )
 
-# electron fetches its ~200MB binary lazily into node_modules/electron/dist;
-# force that now, while /usr is writable and the network is up, so it runs
-# offline at runtime.
-"$DEPS_DIR/node_modules/.bin/electron" --version >/dev/null
+# Materialize electron's ~200MB binary into node_modules/electron/dist now, while
+# /usr is writable and the network is up, so it runs offline at runtime. Use
+# electron's own installer (install.js: checksum-verified download + extract, no
+# launch) rather than running electron itself: the build runs as root and
+# electron fatals as root without --no-sandbox, so `electron --version` can't be
+# used to trigger the download here.
+( cd "$DEPS_DIR/node_modules/electron" && node install.js )
 
 ln -sf "$DEPS_DIR/node_modules/.bin/electron" /usr/bin/electron
 ln -sf "$DEPS_DIR/node_modules/.bin/asar" /usr/bin/asar
 
-# Fail the build if the tools aren't actually runnable, instead of shipping
-# without them.
+# Fail the build if the payload isn't in place, instead of shipping without it.
+# These are file checks (test -x follows the symlinks to cli.js/asar.mjs and the
+# dist binary) and do not launch electron.
+test -x "$DEPS_DIR/node_modules/electron/dist/electron"
 test -x /usr/bin/electron
 test -x /usr/bin/asar
 

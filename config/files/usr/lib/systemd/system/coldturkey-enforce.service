@@ -1,0 +1,6 @@
+[Unit]
+Description=coldturkey - enforce NSFW blocking layers
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/env coldturkey enforce --quiet

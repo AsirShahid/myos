@@ -1,0 +1,11 @@
+[Unit]
+Description=coldturkey - weekly blocklist refresh
+
+[Timer]
+OnBootSec=15min
+OnCalendar=weekly
+Persistent=true
+RandomizedDelaySec=1h
+
+[Install]
+WantedBy=timers.target

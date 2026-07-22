@@ -1,0 +1,13 @@
+[Unit]
+Description=coldturkey - reassert on tampering
+
+[Path]
+PathChanged=/etc/hosts
+PathChanged=/etc/systemd/resolved.conf.d/90-coldturkey.conf
+PathChanged=/etc/firefox/policies/policies.json
+PathChanged=/etc/zen/policies/policies.json
+PathChanged=/etc/chromium/policies/managed/coldturkey.json
+Unit=coldturkey-enforce.service
+
+[Install]
+WantedBy=multi-user.target

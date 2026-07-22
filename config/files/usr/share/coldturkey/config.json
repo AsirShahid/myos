@@ -1,0 +1,10 @@
+{
+  "challenge_length": 100,
+  "display_style": "styled",
+  "blocklist_url": "https://raw.githubusercontent.com/StevenBlack/hosts/master/alternates/porn/hosts",
+  "safesearch": true,
+  "youtube_restricted": false,
+  "dns_layer": true,
+  "browser_policies": true,
+  "lock_hosts_immutable": true
+}

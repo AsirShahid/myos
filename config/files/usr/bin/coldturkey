@@ -1,0 +1,1088 @@
+#!/usr/bin/python3
+"""coldturkey - NSFW blocker with a typed-code unlock.
+
+Layers:
+  1. /etc/hosts blocklist (StevenBlack unified+porn) + SafeSearch pins + Firefox DoH canary
+  2. systemd-resolved global DNS -> Cloudflare family (1.1.1.3), all networks
+  3. Browser enterprise policies: DNS-over-HTTPS off and locked (Firefox, Zen, Chromium)
+
+Enforced by a systemd timer + path unit that revert tampering. Turning anything
+off requires transcribing a random code shown on screen. Pasting is detected
+and rejected; the code is displayed with lookalike Unicode glyphs so a copied
+string never matches the expected ASCII anyway.
+"""
+
+import argparse
+import fcntl
+import json
+import os
+import re
+import secrets
+import select
+import shutil
+import string
+import subprocess
+import sys
+import termios
+import time
+import urllib.request
+
+VERSION = "1.3.0"
+
+ETC_DIR = "/etc/coldturkey"
+VAR_DIR = "/var/lib/coldturkey"
+CONFIG_PATH = os.path.join(ETC_DIR, "config.json")
+ALLOWLIST_PATH = os.path.join(ETC_DIR, "allowlist")
+REDDIT_LIST_PATH = os.path.join(ETC_DIR, "reddit-nsfw.list")
+BULK_LIST_PATH = os.path.join(ETC_DIR, "reddit-nsfw-bulk.list")
+EXTRA_HOSTS_PATH = os.path.join(ETC_DIR, "extra-hosts")
+LISTS_DIR = os.path.join(ETC_DIR, "lists")
+UBLOCK_LIST_PATH = os.path.join(LISTS_DIR, "reddit.txt")
+LISTSERV_URL = "http://127.0.0.1:8531/reddit.txt"
+SHARE_DIR = "/usr/share/coldturkey"
+IMAGE_UNIT_DIR = "/usr/lib/systemd/system"
+IMAGE_BIN = "/usr/bin/coldturkey"
+LOCAL_BIN = "/usr/local/bin/coldturkey"
+STATE_PATH = os.path.join(VAR_DIR, "state.json")
+CACHE_PATH = os.path.join(VAR_DIR, "blocklist.hosts")
+REGISTRY_PATH = os.path.join(VAR_DIR, "files.json")
+BACKUP_DIR = os.path.join(VAR_DIR, "backup")
+HOSTS_PATH = "/etc/hosts"
+HOSTS_ORIG = os.path.join(BACKUP_DIR, "hosts.orig")
+DROPIN_PATH = "/etc/systemd/resolved.conf.d/90-coldturkey.conf"
+UNIT_DIR = "/etc/systemd/system"
+
+MARK_BEGIN = "# >>> coldturkey blocklist >>>"
+MARK_END = "# <<< coldturkey blocklist <<<"
+
+DEFAULTS = {
+    "challenge_length": 80,
+    "display_style": "styled",  # styled | plain
+    "blocklist_url": "https://raw.githubusercontent.com/StevenBlack/hosts/master/alternates/porn/hosts",
+    "safesearch": True,
+    "youtube_restricted": False,
+    "dns_layer": True,
+    "browser_policies": True,
+    "reddit_nsfw_filter": True,
+    "lock_hosts_immutable": True,
+}
+
+# 0 O 1 l I excluded: the code must be easy to transcribe from the screen.
+CHARSET = "".join(c for c in string.ascii_letters + string.digits if c not in "0O1lI")
+
+DROPIN_CONTENT = """\
+# Managed by coldturkey. Deleting this file gets it recreated within seconds.
+[Resolve]
+DNS=1.1.1.3#family.cloudflare-dns.com 1.0.0.3#family.cloudflare-dns.com 2606:4700:4700::1113#family.cloudflare-dns.com 2606:4700:4700::1003#family.cloudflare-dns.com
+Domains=~.
+DNSOverTLS=opportunistic
+"""
+
+POLICY_FIREFOX = {"policies": {"DNSOverHTTPS": {"Enabled": False, "Locked": True}}}
+POLICY_CHROMIUM = {"DnsOverHttpsMode": "off", "ForceGoogleSafeSearch": True}
+
+UNITS = {
+    "coldturkey-enforce.service": """\
+[Unit]
+Description=coldturkey - enforce NSFW blocking layers
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/env coldturkey enforce --quiet
+""",
+    "coldturkey-enforce.timer": """\
+[Unit]
+Description=coldturkey - periodic enforcement
+
+[Timer]
+OnBootSec=90
+OnUnitActiveSec=5min
+AccuracySec=30s
+
+[Install]
+WantedBy=timers.target
+""",
+    "coldturkey-watch.path": """\
+[Unit]
+Description=coldturkey - reassert on tampering
+
+[Path]
+PathChanged=/etc/hosts
+PathChanged=/etc/systemd/resolved.conf.d/90-coldturkey.conf
+PathChanged=/etc/firefox/policies/policies.json
+PathChanged=/etc/zen/policies/policies.json
+PathChanged=/etc/chromium/policies/managed/coldturkey.json
+Unit=coldturkey-enforce.service
+
+[Install]
+WantedBy=multi-user.target
+""",
+    "coldturkey-update.service": """\
+[Unit]
+Description=coldturkey - refresh blocklist
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/env coldturkey update --quiet
+""",
+    "coldturkey-update.timer": """\
+[Unit]
+Description=coldturkey - weekly blocklist refresh
+
+[Timer]
+OnBootSec=15min
+OnCalendar=weekly
+Persistent=true
+RandomizedDelaySec=1h
+
+[Install]
+WantedBy=timers.target
+""",
+    "coldturkey-listserv.service": """\
+[Unit]
+Description=coldturkey - serve filter lists on 127.0.0.1:8531
+
+[Service]
+ExecStart=/usr/bin/python3 -m http.server 8531 --bind 127.0.0.1 --directory /etc/coldturkey/lists
+DynamicUser=yes
+NoNewPrivileges=yes
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target
+""",
+}
+
+ENABLE_UNITS = ["coldturkey-enforce.timer", "coldturkey-watch.path",
+                "coldturkey-update.timer", "coldturkey-listserv.service"]
+
+FLATPAK_OVERRIDES = [
+    ("app.zen_browser.zen", "/etc/zen"),
+    ("org.chromium.Chromium", "/etc/chromium"),
+]
+
+ROOT_CMDS = {"off", "on", "allow", "disallow", "update", "enforce", "uninstall"}
+
+
+# ---------- small helpers ----------
+
+def run(cmd, **kw):
+    kw.setdefault("capture_output", True)
+    kw.setdefault("text", True)
+    return subprocess.run(cmd, **kw)
+
+
+def restorecon(path):
+    if shutil.which("restorecon"):
+        run(["restorecon", "-F", path])
+
+
+def read_text(path):
+    try:
+        with open(path, encoding="utf-8", errors="replace") as f:
+            return f.read()
+    except FileNotFoundError:
+        return None
+
+
+def atomic_write(path, content, mode=0o644):
+    d = os.path.dirname(path)
+    os.makedirs(d, exist_ok=True)
+    tmp = os.path.join(d, ".ct-tmp-%d-%s" % (os.getpid(), os.path.basename(path)))
+    with open(tmp, "w", encoding="utf-8") as f:
+        f.write(content)
+    os.chmod(tmp, mode)
+    os.replace(tmp, path)
+    restorecon(path)
+
+
+def load_json(path, default):
+    txt = read_text(path)
+    if txt is None:
+        return default
+    try:
+        return json.loads(txt)
+    except ValueError:
+        return default
+
+
+def load_config():
+    cfg = dict(DEFAULTS)
+    cfg.update(load_json(CONFIG_PATH, {}))
+    return cfg
+
+
+def load_state():
+    return load_json(STATE_PATH, {})
+
+
+def save_state(st):
+    os.makedirs(VAR_DIR, exist_ok=True)
+    atomic_write(STATE_PATH, json.dumps(st) + "\n")
+
+
+def load_registry():
+    return load_json(REGISTRY_PATH, {})
+
+
+def save_registry(reg):
+    os.makedirs(VAR_DIR, exist_ok=True)
+    atomic_write(REGISTRY_PATH, json.dumps(reg, indent=2) + "\n")
+
+
+def backup_name(path):
+    return path.strip("/").replace("/", "_") + ".orig"
+
+
+def ensure_file(path, content, mode=0o644):
+    """Write path if needed; back up any pre-existing different file once. Returns True if changed."""
+    cur = read_text(path)
+    if cur == content:
+        return False
+    reg = load_registry()
+    if path not in reg:
+        entry = {"preexisted": cur is not None}
+        if cur is not None:
+            os.makedirs(BACKUP_DIR, exist_ok=True)
+            bk = os.path.join(BACKUP_DIR, backup_name(path))
+            atomic_write(bk, cur)
+            entry["backup"] = bk
+        reg[path] = entry
+        save_registry(reg)
+    atomic_write(path, content, mode)
+    return True
+
+
+def remove_managed(path):
+    """Remove a file we created, restoring any pre-existing version. Returns True if changed."""
+    reg = load_registry()
+    entry = reg.get(path)
+    changed = False
+    if entry is None:
+        return False
+    if entry.get("preexisted") and entry.get("backup") and os.path.exists(entry["backup"]):
+        cur = read_text(path)
+        orig = read_text(entry["backup"])
+        if cur != orig:
+            atomic_write(path, orig)
+            changed = True
+    elif os.path.exists(path):
+        os.unlink(path)
+        changed = True
+    del reg[path]
+    save_registry(reg)
+    return changed
+
+
+# ---------- hosts layer ----------
+
+def hosts_immutable():
+    out = run(["lsattr", HOSTS_PATH])
+    if out.returncode != 0 or not out.stdout:
+        return False
+    return "i" in out.stdout.split()[0]
+
+
+def chattr(flag):
+    run(["chattr", flag, HOSTS_PATH])
+
+
+def load_allowlist():
+    txt = read_text(ALLOWLIST_PATH) or ""
+    return [ln.strip().lower() for ln in txt.splitlines() if ln.strip() and not ln.startswith("#")]
+
+
+def is_allowed(host, allow):
+    host = host.lower()
+    for a in allow:
+        if host == a or host.endswith("." + a):
+            return True
+    return False
+
+
+def load_extra_hosts():
+    """Lines: bare hostname (becomes 0.0.0.0) or 'IP hostname' passthrough."""
+    txt = read_text(EXTRA_HOSTS_PATH) or ""
+    out = []
+    for ln in txt.splitlines():
+        ln = ln.strip()
+        if not ln or ln.startswith("#"):
+            continue
+        out.append(ln if " " in ln else "0.0.0.0 " + ln)
+    return out
+
+
+def load_bulk_list():
+    txt = read_text(BULK_LIST_PATH) or ""
+    return [ln.strip() for ln in txt.splitlines() if ln.strip() and not ln.startswith("#")]
+
+
+def build_section(cfg):
+    lines = [
+        MARK_BEGIN,
+        "# Managed by coldturkey. Everything between the markers is regenerated;",
+        "# manual edits here are overwritten within seconds.",
+        "# False positive? sudo coldturkey allow <domain>  (requires the typed code)",
+    ]
+    if cfg.get("safesearch", True):
+        lines += [
+            "216.239.38.120 google.com",
+            "216.239.38.120 www.google.com",
+            "204.79.197.220 bing.com",
+            "204.79.197.220 www.bing.com",
+        ]
+    if cfg.get("youtube_restricted", False):
+        for h in ("www.youtube.com", "m.youtube.com", "youtubei.googleapis.com",
+                  "youtube.googleapis.com", "www.youtube-nocookie.com"):
+            lines.append("216.239.38.120 " + h)
+    lines.append("0.0.0.0 use-application-dns.net")
+    for extra in load_extra_hosts():
+        lines.append(extra)
+    allow = load_allowlist()
+    n = 0
+    cache = read_text(CACHE_PATH)
+    if cache:
+        for ln in cache.splitlines():
+            ln = ln.strip()
+            if not ln.startswith("0.0.0.0 "):
+                continue
+            parts = ln.split()
+            if len(parts) < 2:
+                continue
+            host = parts[1]
+            if host == "0.0.0.0" or is_allowed(host, allow):
+                continue
+            lines.append("0.0.0.0 " + host)
+            n += 1
+    lines.append(MARK_END)
+    return lines, n
+
+
+def strip_section(text):
+    if MARK_BEGIN in text and MARK_END in text:
+        pre = text.split(MARK_BEGIN)[0]
+        post = text.split(MARK_END, 1)[1]
+        text = pre.rstrip("\n") + "\n" + post.lstrip("\n")
+    return text.rstrip("\n") + "\n"
+
+
+def set_hosts(section, lock):
+    """section=None strips our block; else installs it. Returns True if file changed."""
+    cur = read_text(HOSTS_PATH) or ""
+    if not os.path.exists(HOSTS_ORIG):
+        os.makedirs(BACKUP_DIR, exist_ok=True)
+        atomic_write(HOSTS_ORIG, strip_section(cur))
+    base = strip_section(cur)
+    if section is None:
+        new = base
+    else:
+        new = base.rstrip("\n") + "\n\n" + "\n".join(section) + "\n"
+    want_lock = lock and section is not None
+    if new == cur:
+        if want_lock and not hosts_immutable():
+            chattr("+i")
+        elif not want_lock and hosts_immutable():
+            chattr("-i")
+        return False
+    if hosts_immutable():
+        chattr("-i")
+    atomic_write(HOSTS_PATH, new)
+    if want_lock:
+        chattr("+i")
+    return True
+
+
+# ---------- other layers ----------
+
+def load_reddit_list():
+    txt = read_text(REDDIT_LIST_PATH) or ""
+    return [ln.strip() for ln in txt.splitlines() if ln.strip() and not ln.startswith("#")]
+
+
+def reddit_variants(name):
+    """Case variants: as written, lowercase, First-capitalized."""
+    out = []
+    for v in (name, name.lower(), name[:1].upper() + name[1:].lower()):
+        if v not in out:
+            out.append(v)
+    return out
+
+
+def build_reddit_patterns(entries, bulk=None):
+    """entries: 'stem' = prefix block, 'name=' = exact block, '+name' = exception.
+    bulk: full subreddit names, treated as exact blocks, skipped when a stem
+    already covers them. Policy arrays cap at 1000 (browser policy limits);
+    the uBlock list carries the full set.
+
+    Returns (ff_block, ff_except, cr_block, cr_allow) for the Firefox
+    WebsiteFilter and Chromium URLBlocklist/URLAllowlist policies.
+    """
+    ff, ffx, cr, crx = [], [], [], []
+    stems = []
+
+    def add(lst, item):
+        if item not in lst and len(lst) < 1000:
+            lst.append(item)
+
+    def add_exact(name):
+        for v in reddit_variants(name):
+            add(ff, "*://*.reddit.com/r/%s" % v)
+            add(ff, "*://*.reddit.com/r/%s/*" % v)
+            add(cr, "reddit.com/r/%s/" % v)
+
+    for e in entries:
+        if e.startswith("+"):
+            for v in reddit_variants(e[1:]):
+                add(ffx, "*://*.reddit.com/r/%s*" % v)
+                add(crx, "reddit.com/r/%s" % v)
+        elif e.endswith("="):
+            add_exact(e[:-1])
+        else:
+            stems.append(e.lower())
+            for v in reddit_variants(e):
+                add(ff, "*://*.reddit.com/r/%s*" % v)
+                add(cr, "reddit.com/r/%s" % v)
+    for name in bulk or []:
+        low = name.lower()
+        if any(low.startswith(s) for s in stems):
+            continue
+        add_exact(name)
+    return ff, ffx, cr, crx
+
+
+UBLOCK_COSMETIC = [
+    "reddit.com##shreddit-post[nsfw]",
+    "reddit.com##article:has(shreddit-post[nsfw])",
+    "old.reddit.com##.thing.over18",
+]
+
+
+def build_ublock_list(entries, bulk, full=True):
+    """uBlock Origin filter list: unlimited size, case-insensitive matching.
+    full=False emits a header-only list (used while blocking is off)."""
+    out = [
+        "! Title: coldturkey reddit NSFW filter",
+        "! Description: generated by coldturkey from /etc/coldturkey/reddit-nsfw*.list",
+        "! Expires: 4 days",
+    ]
+    if full:
+        rules = ["||redgifs.com^"]
+        for e in entries:
+            if e.startswith("+"):
+                rules.append("@@||reddit.com/r/%s" % e[1:].lower())
+                rules.append("@@||reddit.com/r/%s$document" % e[1:].lower())
+            elif e.endswith("="):
+                rules.append("||reddit.com/r/%s^" % e[:-1].lower())
+            else:
+                rules.append("||reddit.com/r/%s" % e.lower())
+        for name in bulk or []:
+            rules.append("||reddit.com/r/%s^" % name.lower())
+        seen = set()
+        for r in rules:
+            if r not in seen:
+                seen.add(r)
+                out.append(r)
+        out += UBLOCK_COSMETIC
+    return "\n".join(out) + "\n"
+
+
+def policy_targets(cfg):
+    if not cfg.get("browser_policies", True):
+        return {}
+    ff_pol = json.loads(json.dumps(POLICY_FIREFOX))
+    cr_pol = json.loads(json.dumps(POLICY_CHROMIUM))
+    if cfg.get("reddit_nsfw_filter", True):
+        ff, ffx, cr, crx = build_reddit_patterns(load_reddit_list(), load_bulk_list())
+        if ff:
+            ff_pol["policies"]["WebsiteFilter"] = {"Block": ff}
+            if ffx:
+                ff_pol["policies"]["WebsiteFilter"]["Exceptions"] = ffx
+            cr_pol["URLBlocklist"] = cr
+            if crx:
+                cr_pol["URLAllowlist"] = crx
+    ffj = json.dumps(ff_pol, indent=2) + "\n"
+    crj = json.dumps(cr_pol, indent=2) + "\n"
+    t = {
+        "/etc/firefox/policies/policies.json": ffj,
+        "/etc/zen/policies/policies.json": ffj,
+        "/etc/chromium/policies/managed/coldturkey.json": crj,
+        "/etc/opt/chrome/policies/managed/coldturkey.json": crj,
+        "/etc/brave/policies/managed/coldturkey.json": crj,
+    }
+    if os.path.isdir("/var/lib/flatpak/app/org.mozilla.firefox"):
+        base = "/var/lib/flatpak/extension/org.mozilla.firefox.systemconfig/x86_64/stable"
+        t[os.path.join(base, "policies.json")] = ffj
+        t[os.path.join(base, "policies", "policies.json")] = ffj
+    return t
+
+
+def assert_flatpak_overrides():
+    if not shutil.which("flatpak"):
+        return
+    for app, path in FLATPAK_OVERRIDES:
+        if os.path.isdir("/var/lib/flatpak/app/" + app):
+            run(["flatpak", "override", "--system", "--filesystem=%s:ro" % path, app])
+
+
+def ensure_units():
+    """Prefer units shipped in the myos image (/usr/lib); only write /etc
+    overrides when the image copy is absent or outdated."""
+    changed = False
+    for name, content in UNITS.items():
+        etc_path = os.path.join(UNIT_DIR, name)
+        if read_text(os.path.join(IMAGE_UNIT_DIR, name)) == content:
+            if remove_managed(etc_path):
+                changed = True
+        else:
+            if ensure_file(etc_path, content):
+                changed = True
+    if changed:
+        run(["systemctl", "daemon-reload"])
+    for u in ENABLE_UNITS:
+        out = run(["systemctl", "is-enabled", u])
+        if out.stdout.strip() != "enabled":
+            run(["systemctl", "enable", "--now", u])
+    return changed
+
+
+def resolved_family_live():
+    """True if resolved's Global section is actually using the family DNS."""
+    out = run(["resolvectl", "status"])
+    if out.returncode != 0 or not out.stdout:
+        return True  # cannot tell; do not thrash
+    global_part = out.stdout.split("\nLink ")[0]
+    return "1.1.1.3" in global_part
+
+
+def do_enforce(quiet=False):
+    os.makedirs(VAR_DIR, exist_ok=True)
+    lf = open(os.path.join(VAR_DIR, ".lock"), "w")
+    fcntl.flock(lf, fcntl.LOCK_EX)
+    try:
+        return _enforce_locked(quiet)
+    finally:
+        fcntl.flock(lf, fcntl.LOCK_UN)
+        lf.close()
+
+
+SEEDS = [("config.json", CONFIG_PATH), ("reddit-nsfw.list", REDDIT_LIST_PATH),
+         ("reddit-nsfw-bulk.list", BULK_LIST_PATH), ("extra-hosts", EXTRA_HOSTS_PATH),
+         ("README.md", os.path.join(ETC_DIR, "README.md"))]
+
+
+def _enforce_locked(quiet=False):
+    changes = []
+    os.makedirs(ETC_DIR, exist_ok=True)
+    os.makedirs(VAR_DIR, exist_ok=True)
+    for src_name, dst in SEEDS:
+        src = os.path.join(SHARE_DIR, src_name)
+        if not os.path.exists(dst) and os.path.exists(src):
+            atomic_write(dst, read_text(src) or "")
+            changes.append("seeded " + dst)
+    if not os.path.exists(ALLOWLIST_PATH):
+        atomic_write(ALLOWLIST_PATH, "")
+    if os.path.exists(IMAGE_BIN) and os.path.exists(LOCAL_BIN):
+        if read_text(IMAGE_BIN) == read_text(LOCAL_BIN):
+            os.unlink(LOCAL_BIN)
+            changes.append("removed duplicate local binary (image copy is canonical)")
+
+    cfg = load_config()
+    st = load_state()
+    now = time.time()
+    du = st.get("disabled_until")
+    if du is not None and du > 0 and du <= now:
+        st = {}
+        save_state(st)
+        du = None
+    active = du is None
+
+    if ensure_units():
+        changes.append("systemd units")
+    assert_flatpak_overrides()
+
+    resolved_dirty = False
+    hosts_dirty = False
+
+    if active:
+        if cfg.get("dns_layer", True):
+            if ensure_file(DROPIN_PATH, DROPIN_CONTENT):
+                changes.append("resolved drop-in")
+                resolved_dirty = True
+            elif not resolved_family_live():
+                changes.append("resolved restarted (drop-in existed but was not live)")
+                resolved_dirty = True
+        else:
+            if remove_managed(DROPIN_PATH):
+                changes.append("resolved drop-in removed (dns_layer=false)")
+                resolved_dirty = True
+        section, n = build_section(cfg)
+        if set_hosts(section, cfg.get("lock_hosts_immutable", True)):
+            changes.append("hosts blocklist (%d entries)" % n)
+            hosts_dirty = True
+        for path, content in policy_targets(cfg).items():
+            if ensure_file(path, content):
+                changes.append("policy " + path)
+        if cfg.get("reddit_nsfw_filter", True):
+            ub = build_ublock_list(load_reddit_list(), load_bulk_list(), full=True)
+            if ensure_file(UBLOCK_LIST_PATH, ub):
+                changes.append("ublock list (%d rules)" % sum(
+                    1 for ln in ub.splitlines() if ln and not ln.startswith("!")))
+    else:
+        if remove_managed(DROPIN_PATH):
+            changes.append("resolved drop-in removed (unlocked)")
+            resolved_dirty = True
+        if set_hosts(None, False):
+            changes.append("hosts blocklist removed (unlocked)")
+            hosts_dirty = True
+        for path in list(policy_targets(load_config()).keys()):
+            if remove_managed(path):
+                changes.append("policy removed " + path)
+        if ensure_file(UBLOCK_LIST_PATH, build_ublock_list([], [], full=False)):
+            changes.append("ublock list emptied (unlocked; purge cache in uBlock to apply now)")
+
+    if resolved_dirty:
+        run(["systemctl", "try-restart", "systemd-resolved.service"])
+        if active and cfg.get("dns_layer", True):
+            time.sleep(1)
+            if not resolved_family_live() and not quiet:
+                print("warning: resolved restarted but family DNS still not live", file=sys.stderr)
+    if resolved_dirty or hosts_dirty:
+        run(["resolvectl", "flush-caches"])
+
+    if changes and not quiet:
+        for c in changes:
+            print("enforced: " + c)
+    return changes
+
+
+# ---------- the typed-code challenge ----------
+
+class _Sentinel:
+    def __init__(self, name):
+        self.name = name
+
+
+PASTE = _Sentinel("paste")
+NONKB = _Sentinel("nonkeyboard")
+
+
+def gen_code(length):
+    return "".join(secrets.choice(CHARSET) for _ in range(length))
+
+
+def styled_map():
+    m = {}
+    for i, ch in enumerate(string.ascii_uppercase):
+        m[ch] = chr(0x1D5D4 + i)
+    for i, ch in enumerate(string.ascii_lowercase):
+        m[ch] = chr(0x1D5EE + i)
+    for i, ch in enumerate(string.digits):
+        m[ch] = chr(0x1D7EC + i)
+    return m
+
+
+def render_code(code, style):
+    groups = [code[i:i + 4] for i in range(0, len(code), 4)]
+    lines = [" ".join(groups[i:i + 5]) for i in range(0, len(groups), 5)]
+    if style == "styled":
+        m = styled_map()
+        lines = ["".join(m.get(c, c) for c in ln) for ln in lines]
+    return "  " + "\n  ".join(lines)
+
+
+def _read_seq(fd):
+    seq = b""
+    while True:
+        r, _, _ = select.select([fd], [], [], 0.05)
+        if not r:
+            return seq
+        b1 = os.read(fd, 1)
+        if not b1:
+            return seq
+        seq += b1
+        if len(seq) == 1 and b1 != b"[":
+            return seq
+        if len(seq) > 1 and 0x40 <= b1[0] <= 0x7E:
+            return seq
+        if len(seq) > 16:
+            return seq
+
+
+def _drain_paste(fd):
+    end = b"\x1b[201~"
+    buf = b""
+    deadline = time.monotonic() + 3
+    while time.monotonic() < deadline and end not in buf and len(buf) < 2_000_000:
+        r, _, _ = select.select([fd], [], [], 0.2)
+        if not r:
+            break
+        try:
+            buf += os.read(fd, 4096)
+        except OSError:
+            break
+
+
+def read_typed(fd):
+    typed = []
+    stamps = []
+    while True:
+        ch = os.read(fd, 1)
+        if not ch:
+            return None
+        c = ch[0]
+        if c == 0x1B:
+            seq = _read_seq(fd)
+            if seq == b"[200~":
+                _drain_paste(fd)
+                return PASTE
+            continue
+        if c in (3, 4):
+            raise KeyboardInterrupt
+        if c in (13, 10):
+            os.write(fd, b"\r\n")
+            return "".join(typed)
+        if c in (8, 127):
+            if typed:
+                typed.pop()
+                os.write(fd, b"\b \b")
+            continue
+        if c >= 0x80:
+            return NONKB
+        if 0x20 <= c <= 0x7E:
+            now = time.monotonic()
+            stamps.append(now)
+            if len(stamps) >= 12 and now - stamps[-12] < 0.08:
+                return PASTE
+            typed.append(chr(c))
+            os.write(fd, ch)
+
+
+def challenge(cfg, why, length=None):
+    """Show a random code, require it typed by hand. Returns True on success."""
+    try:
+        fd = os.open("/dev/tty", os.O_RDWR)
+    except OSError:
+        print("coldturkey: this needs an interactive terminal.", file=sys.stderr)
+        return False
+    if length is None:
+        length = max(40, int(cfg.get("challenge_length", 80)))
+    style = cfg.get("display_style", "styled")
+    enc = (getattr(sys.stdout, "encoding", "") or "").lower()
+    if "utf" not in enc and style == "styled":
+        style = "plain"
+
+    def tprint(s):
+        os.write(fd, (s + "\r\n").encode())
+
+    tprint("")
+    tprint("To %s, type the %d-character code below, then Enter." % (why, length))
+    tprint("Pasting or non-keyboard input is detected and gets a fresh code.")
+    tprint("Codes never contain 0, O, 1, l, or I. Spaces are optional. Ctrl-C aborts.")
+    try:
+        while True:
+            code = gen_code(length)
+            tprint("")
+            for ln in render_code(code, style).split("\n"):
+                tprint(ln)
+            tprint("")
+            os.write(fd, b"> ")
+            old = termios.tcgetattr(fd)
+            attrs = termios.tcgetattr(fd)
+            attrs[3] &= ~(termios.ICANON | termios.ECHO)
+            attrs[6][termios.VMIN] = 1
+            attrs[6][termios.VTIME] = 0
+            os.write(fd, b"\x1b[?2004h")
+            try:
+                termios.tcsetattr(fd, termios.TCSADRAIN, attrs)
+                res = read_typed(fd)
+            finally:
+                termios.tcsetattr(fd, termios.TCSADRAIN, old)
+                os.write(fd, b"\x1b[?2004l")
+            if res is PASTE:
+                tprint("Paste detected. New code.")
+                continue
+            if res is NONKB:
+                tprint("Non-keyboard characters detected. New code.")
+                continue
+            if res is None:
+                return False
+            if "".join(res.split()) == code:
+                tprint("Code matched.")
+                return True
+            tprint("Didn't match. New code.")
+    finally:
+        os.close(fd)
+
+
+# ---------- commands ----------
+
+def parse_dur(s):
+    m = re.fullmatch(r"(\d+)([smhdw])", s.strip())
+    if not m:
+        raise SystemExit("coldturkey: bad duration %r (use e.g. 30m, 2h, 1d)" % s)
+    mult = {"s": 1, "m": 60, "h": 3600, "d": 86400, "w": 604800}
+    return int(m.group(1)) * mult[m.group(2)]
+
+
+def cmd_off(args):
+    cfg = load_config()
+    if not challenge(cfg, "turn blocking off"):
+        raise SystemExit(1)
+    if args.forever:
+        save_state({"disabled_until": -1})
+        until = "you run `coldturkey on`"
+    else:
+        secs = parse_dur(getattr(args, "for") or "1h")
+        t = time.time() + secs
+        save_state({"disabled_until": t})
+        until = time.strftime("%H:%M (%Y-%m-%d)", time.localtime(t))
+    do_enforce(quiet=True)
+    print("Blocking is off until %s." % until)
+    print("Browsers cache DNS; restart the browser if a site still looks blocked.")
+    if not args.forever:
+        print("Re-arms automatically within ~5 minutes of expiry.")
+
+
+def cmd_on(args):
+    save_state({})
+    do_enforce(quiet=True)
+    print("Blocking re-enabled.")
+
+
+DOMAIN_RE = re.compile(r"^(?=.{1,253}$)([a-z0-9_-]+\.)+[a-z]{2,}$", re.I)
+
+
+def cmd_allow(args):
+    cfg = load_config()
+    bad = [d for d in args.domains if not DOMAIN_RE.match(d)]
+    if bad:
+        raise SystemExit("coldturkey: not a domain: %s" % " ".join(bad))
+    if not challenge(cfg, "allow %s" % ", ".join(args.domains)):
+        raise SystemExit(1)
+    cur = load_allowlist()
+    new = [d.lower() for d in args.domains if d.lower() not in cur]
+    if new:
+        txt = (read_text(ALLOWLIST_PATH) or "").rstrip("\n")
+        txt = (txt + "\n" if txt else "") + "\n".join(new) + "\n"
+        atomic_write(ALLOWLIST_PATH, txt)
+    do_enforce(quiet=True)
+    print("Allowed (hosts layer): %s" % ", ".join(args.domains))
+    print("If it still resolves to 0.0.0.0, the Cloudflare family DNS layer is"
+          " blocking it server-side; that layer has no per-site override.")
+
+
+def cmd_disallow(args):
+    cur = load_allowlist()
+    keep = [d for d in cur if d not in [x.lower() for x in args.domains]]
+    atomic_write(ALLOWLIST_PATH, "\n".join(keep) + ("\n" if keep else ""))
+    do_enforce(quiet=True)
+    print("Removed from allowlist: %s" % ", ".join(args.domains))
+
+
+def cmd_update(args):
+    cfg = load_config()
+    url = cfg["blocklist_url"]
+    req = urllib.request.Request(url, headers={"User-Agent": "coldturkey/" + VERSION})
+    try:
+        with urllib.request.urlopen(req, timeout=90) as r:
+            data = r.read().decode("utf-8", "replace")
+    except Exception as e:
+        print("coldturkey: download failed, keeping existing list (%s)" % e, file=sys.stderr)
+        raise SystemExit(1)
+    n = sum(1 for ln in data.splitlines() if ln.startswith("0.0.0.0 "))
+    if n < 20000:
+        print("coldturkey: list looks wrong (%d entries), keeping existing" % n, file=sys.stderr)
+        raise SystemExit(1)
+    atomic_write(CACHE_PATH, data)
+    do_enforce(quiet=True)
+    if not args.quiet:
+        print("Blocklist updated: %d entries." % n)
+
+
+def cmd_enforce(args):
+    do_enforce(quiet=args.quiet)
+
+
+def cmd_status(args):
+    st = load_state()
+    du = st.get("disabled_until")
+    if du is None:
+        mode = "ENFORCING"
+    elif du < 0:
+        mode = "OFF until `coldturkey on`"
+    else:
+        mode = "OFF until " + time.strftime("%H:%M %Y-%m-%d", time.localtime(du))
+    print("coldturkey %s - %s" % (VERSION, mode))
+    hosts = read_text(HOSTS_PATH) or ""
+    if MARK_BEGIN in hosts:
+        n = sum(1 for ln in hosts.split(MARK_BEGIN, 1)[1].splitlines() if ln.startswith("0.0.0.0 "))
+        print("  hosts layer: present (%d block entries, immutable=%s)" % (n, hosts_immutable()))
+    else:
+        print("  hosts layer: absent")
+    if os.path.exists(DROPIN_PATH):
+        live = resolved_family_live()
+        print("  dns layer: present, %s" % ("LIVE (resolved using family DNS)" if live
+                                            else "NOT LIVE (waiting on enforce to restart resolved)"))
+    else:
+        print("  dns layer: absent")
+    cfg = load_config()
+    pols = [p for p in policy_targets(cfg) if os.path.exists(p)]
+    print("  browser policies: %d file(s)" % len(pols))
+    if cfg.get("reddit_nsfw_filter", True):
+        ff, ffx, _, _ = build_reddit_patterns(load_reddit_list(), load_bulk_list())
+        print("  reddit policy filter: %d URL patterns (%d exceptions, cap 1000)" % (len(ff), len(ffx)))
+        ub = read_text(UBLOCK_LIST_PATH) or ""
+        n = sum(1 for ln in ub.splitlines() if ln and not ln.startswith("!"))
+        print("  reddit ublock list: %d rules -> import %s in uBlock" % (n, LISTSERV_URL))
+    for u in ENABLE_UNITS:
+        out = run(["systemctl", "is-active", u])
+        print("  %s: %s" % (u, out.stdout.strip()))
+    if os.path.exists(CACHE_PATH):
+        age = (time.time() - os.path.getmtime(CACHE_PATH)) / 86400
+        print("  blocklist cache: %.1f days old" % age)
+    else:
+        print("  blocklist cache: MISSING (run: sudo coldturkey update)")
+    allow = load_allowlist()
+    if allow:
+        print("  allowlist: " + ", ".join(allow))
+
+
+def cmd_demo(args):
+    cfg = load_config()
+    ok = challenge(cfg, "finish the demo (nothing will change)", length=args.length)
+    print("Demo complete." if ok else "Demo aborted.")
+
+
+def cmd_uninstall(args):
+    cfg = load_config()
+    if not challenge(cfg, "uninstall coldturkey"):
+        raise SystemExit(1)
+    for u in ENABLE_UNITS:
+        run(["systemctl", "disable", "--now", u])
+    reg = load_registry()
+    for path in list(reg.keys()):
+        remove_managed(path)
+    run(["systemctl", "daemon-reload"])
+    if hosts_immutable():
+        chattr("-i")
+    cur = read_text(HOSTS_PATH) or ""
+    if MARK_BEGIN in cur:
+        atomic_write(HOSTS_PATH, strip_section(cur))
+    save_state({})
+    run(["systemctl", "try-restart", "systemd-resolved.service"])
+    run(["resolvectl", "flush-caches"])
+    print("Uninstalled. Backups kept in %s." % VAR_DIR)
+    print("Delete the binary yourself if you want: sudo rm /usr/local/bin/coldturkey")
+
+
+def cmd_selftest(args):
+    checks = 0
+    code = gen_code(80)
+    assert len(code) == 80 and all(c in CHARSET for c in code)
+    assert not any(c in "0O1lI" for c in code)
+    checks += 1
+    m = styled_map()
+    assert len(set(m.values())) == len(m) == 62
+    rendered = render_code(code, "styled")
+    inv = {v: k for k, v in m.items()}
+    back = "".join(inv[c] for c in rendered if c in inv)
+    assert back == code
+    checks += 1
+    plain = render_code(code, "plain")
+    assert "".join(plain.split()) == code
+    checks += 1
+    txt = "127.0.0.1 localhost\n\n%s\njunk\n0.0.0.0 bad.example\n%s\n" % (MARK_BEGIN, MARK_END)
+    assert strip_section(txt) == "127.0.0.1 localhost\n"
+    assert strip_section("a\n") == "a\n"
+    checks += 1
+    assert is_allowed("x.example.com", ["example.com"])
+    assert is_allowed("example.com", ["example.com"])
+    assert not is_allowed("badexample.com", ["example.com"])
+    checks += 1
+    assert parse_dur("30m") == 1800 and parse_dur("2h") == 7200 and parse_dur("1d") == 86400
+    checks += 1
+    ff, ffx, cr, crx = build_reddit_patterns(["gonewild", "anal=", "+pornfree"])
+    assert "*://*.reddit.com/r/gonewild*" in ff and "*://*.reddit.com/r/Gonewild*" in ff
+    assert "*://*.reddit.com/r/anal" in ff and "*://*.reddit.com/r/anal/*" in ff
+    assert "reddit.com/r/anal/" in cr and "reddit.com/r/anal" not in cr
+    assert "reddit.com/r/pornfree" in crx and "*://*.reddit.com/r/pornfree*" in ffx
+    assert len(ff) == len(set(ff)) and len(cr) == len(set(cr))
+    checks += 1
+    ff2, _, cr2, _ = build_reddit_patterns(["gonewild"], ["GoneWildAudio", "2busty2hide"])
+    assert not any("GoneWildAudio" in p for p in ff2), "stem-covered bulk name not skipped"
+    assert "reddit.com/r/2busty2hide/" in cr2
+    ub = build_ublock_list(["gonewild", "anal=", "+pornfree"], ["2busty2hide"])
+    assert "||reddit.com/r/gonewild" in ub.splitlines()
+    assert "||reddit.com/r/anal^" in ub.splitlines()
+    assert "||reddit.com/r/2busty2hide^" in ub.splitlines()
+    assert "@@||reddit.com/r/pornfree" in ub.splitlines()
+    assert "||redgifs.com^" in ub.splitlines()
+    assert "reddit.com##shreddit-post[nsfw]" in ub.splitlines()
+    empty = build_ublock_list([], [], full=False)
+    assert "||" not in empty and "! Title:" in empty
+    checks += 1
+    print("self-test: %d checks passed" % checks)
+
+
+def main():
+    p = argparse.ArgumentParser(prog="coldturkey", description=__doc__,
+                                formatter_class=argparse.RawDescriptionHelpFormatter)
+    p.add_argument("--version", action="version", version=VERSION)
+    sub = p.add_subparsers(dest="cmd")
+
+    sp = sub.add_parser("status", help="show what is active")
+    sp.set_defaults(fn=cmd_status)
+
+    sp = sub.add_parser("off", help="turn blocking off (typed-code challenge)")
+    sp.add_argument("--for", dest="for", metavar="DUR", default="1h",
+                    help="duration like 30m, 2h, 1d (default 1h)")
+    sp.add_argument("--forever", action="store_true", help="off until `coldturkey on`")
+    sp.set_defaults(fn=cmd_off)
+
+    sp = sub.add_parser("on", help="re-enable blocking now (no challenge)")
+    sp.set_defaults(fn=cmd_on)
+
+    sp = sub.add_parser("allow", help="allowlist domains (typed-code challenge)")
+    sp.add_argument("domains", nargs="+")
+    sp.set_defaults(fn=cmd_allow)
+
+    sp = sub.add_parser("disallow", help="remove domains from the allowlist")
+    sp.add_argument("domains", nargs="+")
+    sp.set_defaults(fn=cmd_disallow)
+
+    sp = sub.add_parser("update", help="refresh the blocklist")
+    sp.add_argument("--quiet", action="store_true")
+    sp.set_defaults(fn=cmd_update)
+
+    sp = sub.add_parser("enforce", help="assert all layers now")
+    sp.add_argument("--quiet", action="store_true")
+    sp.set_defaults(fn=cmd_enforce)
+
+    sp = sub.add_parser("demo", help="try the typed-code challenge, no side effects")
+    sp.add_argument("--length", type=int, default=None)
+    sp.set_defaults(fn=cmd_demo)
+
+    sp = sub.add_parser("uninstall", help="remove everything (typed-code challenge)")
+    sp.set_defaults(fn=cmd_uninstall)
+
+    sp = sub.add_parser("self-test", help="run internal checks")
+    sp.set_defaults(fn=cmd_selftest)
+
+    args = p.parse_args()
+    if args.cmd is None:
+        cmd_status(args)
+        return
+    if args.cmd in ROOT_CMDS and os.geteuid() != 0:
+        os.execvp("sudo", ["sudo", os.path.abspath(sys.argv[0])] + sys.argv[1:])
+    args.fn(args)
+
+
+if __name__ == "__main__":
+    try:
+        main()
+    except KeyboardInterrupt:
+        print("\nAborted.")
+        sys.exit(130)

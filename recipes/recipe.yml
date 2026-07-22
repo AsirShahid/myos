@@ -322,6 +322,12 @@ modules:
       enabled:
         - power-profiles-daemon.service
         - windscribe-helper.service  # Windscribe kill-switch/firewall daemon (RPM preset no-ops in offline build)
+        # coldturkey NSFW blocker (files/usr/bin/coldturkey + seeds in
+        # files/usr/share/coldturkey; /etc populated on first enforce)
+        - coldturkey-enforce.timer
+        - coldturkey-watch.path
+        - coldturkey-update.timer
+        - coldturkey-listserv.service
       disabled:
         - waydroid-container.service  # ujust setup-waydroid enables it on init
         - tuned.service  # the tuned package (not tuned-ppd) stays in the base and

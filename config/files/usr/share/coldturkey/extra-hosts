@@ -1,0 +1,16 @@
+# Extra hosts-layer blocks, merged into /etc/hosts by coldturkey enforce.
+# One bare hostname per line (becomes 0.0.0.0), or "IP hostname" passthrough.
+# /etc/hosts cannot wildcard subdomains; the DNS layer covers unknown ones.
+# redgifs CDN hosts (StevenBlack only lists the www/api/base names):
+media.redgifs.com
+thumbs1.redgifs.com
+thumbs2.redgifs.com
+thumbs3.redgifs.com
+thumbs4.redgifs.com
+thumbs5.redgifs.com
+thumbs44.redgifs.com
+thumbs46.redgifs.com
+files.redgifs.com
+userpic.redgifs.com
+v3.redgifs.com
+cdn.redgifs.com

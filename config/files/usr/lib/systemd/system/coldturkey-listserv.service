@@ -1,0 +1,12 @@
+[Unit]
+Description=coldturkey - serve filter lists on 127.0.0.1:8531
+
+[Service]
+ExecStart=/usr/bin/python3 -m http.server 8531 --bind 127.0.0.1 --directory /etc/coldturkey/lists
+DynamicUser=yes
+NoNewPrivileges=yes
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,104 @@
+# coldturkey reddit NSFW filter list.
+# One entry per line. Three forms:
+#   name     blocks /r/name and every subreddit STARTING with it (prefix match)
+#   name=    blocks /r/name exactly (use when a prefix would hit SFW subs,
+#            e.g. "anal" would block r/analog, "ass" would block r/assassinscreed)
+#   +name    exception: never block subs starting with this (recovery subs,
+#            SFW prefix collisions)
+# Case variants (as written, lowercase, First-cap) are generated automatically.
+# Odd mixed-case URLs can slip past; the hosts/DNS layers still apply to media.
+# Edit needs sudo; changes apply within 5 min or on `sudo coldturkey enforce`.
+
+# --- prefix stems ---
+gonewild
+nsfw
+porn
+hentai
+rule34
+milf
+gilf
+dilf
+cum
+blowjob
+handjob
+footjob
+deepthroat
+creampie
+cuckold
+hotwife
+wifesharing
+swinger
+threesome
+gangbang
+bukkake
+facials
+titfuck
+paizuri
+ahegao
+ecchi
+doujin
+futa
+yiff
+femdom
+bdsm
+bondage
+fetish
+kink
+upskirt
+voyeur
+exhibitionis
+boobs
+boobies
+tits
+titty
+nude
+slut
+pussy
+dildo
+masturbat
+squirting
+grool
+pawg
+sex
+xxx
+onlyfans
+camgirl
+camwhore
+chaturbate
+stripchat
+escorts
+
+# --- exact-only (prefix would catch SFW subs) ---
+ass=
+anal=
+butt=
+feet=
+petite=
+jav=
+
+# --- specific subs not covered by a stem ---
+asstastic
+butts
+RealGirls
+LegalTeens
+collegesluts
+BustyPetite
+burstingout
+HoldTheMoan
+OnOff
+palegirls
+PetiteGoneWild
+AsiansGoneWild
+AltGoneWild
+TransGoneWild
+BiggerThanYouThought
+adorableporn
+ThickThighs
+curvy
+
+# --- exceptions ---
++pornfree
++pornaddiction
++cumbria
++cummins
++cumberbatch

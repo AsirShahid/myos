@@ -17,15 +17,28 @@ set -oue pipefail
 # Auth is NOT baked: `modal token set` writes ~/.modal.toml per-user (a secret),
 # which the modal CLI/SDK reads at runtime.
 #
-# Pinned so the daily image rebuild doesn't silently ship a new modal release;
-# bump deliberately. Latest on PyPI: https://pypi.org/pypi/modal/json (.info.version)
+# Pinned with a hashed lockfile (config/files/usr/lib/modal-deps/requirements.lock,
+# shipped into /usr by the files module before this script runs) so the daily
+# rebuild pins modal AND its whole transitive tree by integrity, instead of
+# resolving fresh from PyPI. Regenerate the lock alongside MODAL_VERSION with:
+#   uv pip compile requirements.in --generate-hashes --python /usr/bin/python3 \
+#     -o requirements.lock   # requirements.in = "modal==<new version>"
+# Latest on PyPI: https://pypi.org/pypi/modal/json (.info.version)
 MODAL_VERSION=1.5.1
 MODAL_VENV=/usr/lib/modal
+MODAL_LOCK=/usr/lib/modal-deps/requirements.lock
+
+# Fail fast if MODAL_VERSION and the lock have drifted apart (they must be bumped
+# together).
+grep -q "^modal==${MODAL_VERSION} " "${MODAL_LOCK}" || {
+  echo "getmodal.sh: MODAL_VERSION=${MODAL_VERSION} does not match ${MODAL_LOCK}; bump both together." >&2
+  exit 1
+}
 
 echo "Installing modal ${MODAL_VERSION} into ${MODAL_VENV}..."
 rm -rf "${MODAL_VENV}"
 python3 -m venv "${MODAL_VENV}"
-"${MODAL_VENV}/bin/pip" install --no-cache-dir "modal==${MODAL_VERSION}"
+"${MODAL_VENV}/bin/pip" install --no-cache-dir --require-hashes -r "${MODAL_LOCK}"
 ln -sf "${MODAL_VENV}/bin/modal" /usr/bin/modal
 
 # Sanity-check the entrypoint resolves (fails the build if the venv is broken).

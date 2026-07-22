@@ -1,0 +1,10 @@
+{
+  "name": "claude-cowork-deps",
+  "version": "1.0.0",
+  "description": "Pinned electron + @electron/asar for the claude-cowork launcher (myos image build).",
+  "private": true,
+  "dependencies": {
+    "@electron/asar": "4.2.0",
+    "electron": "42.4.0"
+  }
+}

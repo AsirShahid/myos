@@ -16,21 +16,33 @@ set -oue pipefail
 
 echo 'Staging claude-cowork-linux...'
 
-# Node global tools the upstream launcher needs: electron + @electron/asar.
-# Install with an explicit --prefix=/usr. Fedora's npm defaults prefix to
-# /usr/local, which on a bootc image is a symlink into /var/usrlocal (machine-
-# local, never shipped) — so a plain `npm -g` would silently NOT land in the
-# image, and install.sh would then install whatever unpinned electron/asar the
-# npm dist-tag serves that day into the user's home. --prefix=/usr puts the
-# binaries in /usr/bin where they stay on PATH at runtime (read-only /usr), so
-# install.sh finds them and skips its own unpinned install, keeping these pins
-# load-bearing.
-# Pinned so the daily image rebuild doesn't silently pull new majors; bump
-# deliberately (upstream's COMPAT.md tracks the last tested asar/electron).
-npm install -g --prefix=/usr @electron/asar@4.2.0 electron@42.4.0
+# Node tools the upstream launcher needs: electron + @electron/asar. Pinned with
+# a full lockfile (package.json + package-lock.json under
+# config/files/usr/lib/claude-cowork-deps, shipped into /usr by the files module
+# before this script runs), so `npm ci` installs the exact integrity-checked
+# dependency tree instead of re-resolving from the registry on every daily
+# rebuild. Bump the two versions in package.json and regenerate the lock with
+# `npm install --package-lock-only` deliberately; upstream's COMPAT.md tracks the
+# last tested asar/electron.
+#
+# Installing under /usr/lib and symlinking into /usr/bin keeps the binaries on
+# PATH at runtime (where /usr is read-only), so install.sh finds them and skips
+# its own unpinned electron/asar install, keeping these pins load-bearing. A
+# plain `npm -g` would land in /usr/local, a bootc symlink into machine-local
+# /var/usrlocal, and never ship.
+DEPS_DIR=/usr/lib/claude-cowork-deps
+( cd "$DEPS_DIR" && npm ci --no-audit --no-fund )
 
-# Fail the build if the payload didn't actually land in /usr/bin (e.g. if npm's
-# prefix behavior changes), instead of silently shipping without them.
+# electron fetches its ~200MB binary lazily into node_modules/electron/dist;
+# force that now, while /usr is writable and the network is up, so it runs
+# offline at runtime.
+"$DEPS_DIR/node_modules/.bin/electron" --version >/dev/null
+
+ln -sf "$DEPS_DIR/node_modules/.bin/electron" /usr/bin/electron
+ln -sf "$DEPS_DIR/node_modules/.bin/asar" /usr/bin/asar
+
+# Fail the build if the tools aren't actually runnable, instead of shipping
+# without them.
 test -x /usr/bin/electron
 test -x /usr/bin/asar
 

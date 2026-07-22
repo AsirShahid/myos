@@ -53,13 +53,9 @@ modules:
         - openvpn
         - NetworkManager-openvpn
         - NetworkManager-openconnect
-        # Windscribe (GUI + windscribe-cli). No upstream dnf repo, so install the
-        # version-pinned Fedora RPM straight from GitHub. dnf treats it as an
-        # @commandline package and skips the vendor-signature gpg check with a
-        # warning, so no no-gpgchecks needed. Ships windscribe-helper.service,
-        # enabled via the systemd module below. Bump both version numbers in the
-        # URL to update; `ujust windscribe-version` flags when a newer one exists.
-        - https://github.com/Windscribe/Desktop-App/releases/download/v2.23.11/windscribe_2.23.11_amd64_fedora.rpm
+        # Windscribe (GUI + windscribe-cli) is installed by
+        # config/scripts/getwindscribe.sh (checksum-pinned RPM), not here, since
+        # a GitHub release asset URL as a dnf package has no integrity check.
 
         # CLI Utilities
         - jq
@@ -172,7 +168,8 @@ modules:
     upgrade-interval: '8h'
     upgrade-wait-after-boot: '30min'
     nofile-limits: false
-    brew-analytics: true
+    brew-analytics: false  # opt out of Homebrew's InfluxDB telemetry (writes
+                           # HOMEBREW_NO_ANALYTICS=1); matches the recipe's VPN/privacy posture
 
   - type: default-flatpaks
     configurations:
@@ -222,6 +219,7 @@ modules:
           #     the bluefin-dx base; listing them is idempotent/harmless. ---
           - app.zen_browser.zen
           - chat.simplex.simplex
+          - com.calibre_ebook.calibre
           - com.github.Matoking.protontricks
           - com.github.PintaProject.Pinta
           - com.github.zocker_160.SyncThingy
@@ -279,6 +277,7 @@ modules:
       - getclaude-cowork.sh
       - getclaude-science.sh
       - getmodal.sh
+      - getwindscribe.sh
       - patch-waydroid-net.sh
 
   # Validates config/justfiles/*.just at build time and imports them into
@@ -325,5 +324,10 @@ modules:
         - windscribe-helper.service  # Windscribe kill-switch/firewall daemon (RPM preset no-ops in offline build)
       disabled:
         - waydroid-container.service  # ujust setup-waydroid enables it on init
+        - tuned.service  # the tuned package (not tuned-ppd) stays in the base and
+                         # its service is preset-enabled; power-profiles-daemon.service
+                         # declares Conflicts=tuned.service, so leaving both enabled
+                         # lets systemd pick the winner at boot. Disable tuned so ppd
+                         # wins deterministically.
 
   - type: signing

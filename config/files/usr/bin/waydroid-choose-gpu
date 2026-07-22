@@ -27,18 +27,32 @@ echo ""
 echo "Confirm that these belong to your GPU:"
 echo ""
 
-ls -l /dev/dri/by-path/ | grep -i $gpuchoice
+ls -l /dev/dri/by-path/ | grep -i "$gpuchoice"
 
 echo ""
 
-card=$(ls -l /dev/dri/by-path/ | grep -i $gpuchoice | grep -o "card[0-9]")
-rendernode=$(ls -l /dev/dri/by-path/ | grep -i $gpuchoice | grep -o "renderD[1-9][1-9][1-9]")
+# [0-9]+ (not [1-9][1-9][1-9]): match card10+, renderD130+, and any single-digit
+# card too. The old pattern silently produced an empty match on those, leaving a
+# broken mount entry.
+card=$(ls -l /dev/dri/by-path/ | grep -i "$gpuchoice" | grep -o "card[0-9]\+" | head -n1)
+rendernode=$(ls -l /dev/dri/by-path/ | grep -i "$gpuchoice" | grep -o "renderD[0-9]\+" | head -n1)
 
 echo /dev/dri/$card
 echo /dev/dri/$rendernode
 
-cp /var/lib/waydroid/lxc/waydroid/config_nodes /var/lib/waydroid/lxc/waydroid/config_nodes.bak
+if [ -z "$card" ] || [ -z "$rendernode" ]; then
+	echo "Could not resolve the card/render node for GPU $gpuchoice; aborting without touching the Waydroid config." >&2
+	exit 1
+fi
+
+CONFIG=/var/lib/waydroid/lxc/waydroid/config_nodes
+if [ ! -f "$CONFIG" ]; then
+	echo "Waydroid isn't initialized yet ($CONFIG missing). Run 'ujust setup-waydroid init' first." >&2
+	exit 1
+fi
+
+cp "$CONFIG" "$CONFIG.bak"
 #lxc.mount.entry = /dev/dri dev/dri none bind,create=dir,optional 0 0
-sed -i '/dri/d' /var/lib/waydroid/lxc/waydroid/config_nodes
-echo "lxc.mount.entry = /dev/dri/$card dev/dri/card0 none bind,create=file,optional 0 0" >> /var/lib/waydroid/lxc/waydroid/config_nodes
-echo "lxc.mount.entry = /dev/dri/$rendernode dev/dri/renderD128 none bind,create=file,optional 0 0" >> /var/lib/waydroid/lxc/waydroid/config_nodes
+sed -i '/dri/d' "$CONFIG"
+echo "lxc.mount.entry = /dev/dri/$card dev/dri/card0 none bind,create=file,optional 0 0" >> "$CONFIG"
+echo "lxc.mount.entry = /dev/dri/$rendernode dev/dri/renderD128 none bind,create=file,optional 0 0" >> "$CONFIG"

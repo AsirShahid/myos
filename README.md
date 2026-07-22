@@ -3,16 +3,19 @@
 My personal OS image, built with [BlueBuild](https://blue-build.org/) on top of
 [Bluefin DX](https://projectbluefin.io/). On top of the base it adds:
 
-- **niri** (scrollable-tiling Wayland compositor) plus wlroots tooling
-  (fuzzel, grim/slurp, dunst, swappy, …) alongside the stock GNOME desktop
+- **niri** (scrollable-tiling Wayland compositor) plus its session stack
+  (hyprlock, hypridle, SwayNotificationCenter, AGS/aylurs-gtk-shell) and wlroots
+  tooling (fuzzel, grim/slurp, dunst, swappy, …) alongside the stock GNOME desktop
 - **GNOME tweaks**: pop-shell tiling, Blur my Shell, Night Theme Switcher,
-  Caffeine, Bluetooth Battery Meter, and Copyous, enabled via gschema override
-- **VPNs**: Mullvad, GlobalProtect (openconnect), and OpenVPN/OpenConnect
-  NetworkManager plugins
+  Caffeine, Bluetooth Battery Meter, and Copyous, enabled via gschema override,
+  plus the Bibata-Modern-Ice cursor theme
+- **VPNs**: Mullvad, Windscribe (with `ujust setup-windscribe`), GlobalProtect
+  (openconnect), and OpenVPN/OpenConnect NetworkManager plugins
 - **Apps**: a Flathub set (Steam, Obsidian, Bitwarden, LibreOffice, Discord,
   Telegram, Element, …), [Beeper](https://www.beeper.com/) (pinned AppImage),
-  and [claude-cowork-linux](https://github.com/johnzfitch/claude-cowork-linux)
-  via the `/usr/bin/claude-cowork` launcher
+  [claude-cowork-linux](https://github.com/johnzfitch/claude-cowork-linux) via
+  the `/usr/bin/claude-cowork` launcher, and Anthropic's claude-science
+  (`/usr/bin/claude-science`) with the Modal CLI as its compute backend
 - **Waydroid** for Android apps, with Bazzite's setup recipe
   (`ujust setup-waydroid`) and firewalld networking fix baked in
 - **CLI**: starship, helix, kitty, emacs, atuin, fzf, Nerd Fonts, and Homebrew

@@ -17,12 +17,22 @@ set -oue pipefail
 echo 'Staging claude-cowork-linux...'
 
 # Node global tools the upstream launcher needs: electron + @electron/asar.
-# During the BlueBuild build /usr is writable, so `npm -g` lands in the image
-# (binaries symlinked into /usr/bin), keeping them on PATH at runtime where
-# /usr is read-only.
+# Install with an explicit --prefix=/usr. Fedora's npm defaults prefix to
+# /usr/local, which on a bootc image is a symlink into /var/usrlocal (machine-
+# local, never shipped) — so a plain `npm -g` would silently NOT land in the
+# image, and install.sh would then install whatever unpinned electron/asar the
+# npm dist-tag serves that day into the user's home. --prefix=/usr puts the
+# binaries in /usr/bin where they stay on PATH at runtime (read-only /usr), so
+# install.sh finds them and skips its own unpinned install, keeping these pins
+# load-bearing.
 # Pinned so the daily image rebuild doesn't silently pull new majors; bump
 # deliberately (upstream's COMPAT.md tracks the last tested asar/electron).
-npm install -g @electron/asar@4.2.0 electron@42.4.0
+npm install -g --prefix=/usr @electron/asar@4.2.0 electron@42.4.0
+
+# Fail the build if the payload didn't actually land in /usr/bin (e.g. if npm's
+# prefix behavior changes), instead of silently shipping without them.
+test -x /usr/bin/electron
+test -x /usr/bin/asar
 
 # Clone the upstream source read-only into the image. The launcher mirrors
 # this into ~/.local/share at runtime (same strategy as the upstream Nix flake).

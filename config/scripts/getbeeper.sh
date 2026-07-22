@@ -17,7 +17,7 @@ BEEPER_VERSION=4.2.957
 BEEPER_SHA256=c14194c16a2943ca31dbe50fe615c8205d9754b42667285f6fbd764bc2634c69
 
 echo "Downloading Beeper ${BEEPER_VERSION}..."
-curl -fL -o /tmp/beeper.AppImage \
+curl -fL --retry 3 --retry-delay 5 --retry-all-errors -o /tmp/beeper.AppImage \
   "https://beeper-desktop.download.beeper.com/builds/Beeper-${BEEPER_VERSION}-x86_64.AppImage"
 echo "${BEEPER_SHA256}  /tmp/beeper.AppImage" | sha256sum -c -
 install -m 0755 /tmp/beeper.AppImage /usr/bin/beeper

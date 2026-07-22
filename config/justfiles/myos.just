@@ -7,11 +7,13 @@
 
 # Run claude-cowork preflight diagnostics
 claude-cowork-doctor:
-    claude-cowork --doctor
+    # Full path: after first install, install.sh writes ~/.local/bin/claude-cowork
+    # earlier on PATH, and it doesn't handle these flags the way this wrapper does.
+    /usr/bin/claude-cowork --doctor
 
 # Wipe the per-user claude-cowork install and set it up again
 claude-cowork-reinstall:
-    claude-cowork --reinstall
+    /usr/bin/claude-cowork --reinstall
 
 # Show the Beeper version baked into this image vs the latest upstream release
 beeper-version:
@@ -19,7 +21,7 @@ beeper-version:
     set -euo pipefail
     baked="$(cat /usr/share/myos/beeper-version 2>/dev/null || echo unknown)"
     latest="$(curl -sfI https://api.beeper.com/desktop/download/linux/x64/stable/com.automattic.beeper.desktop \
-        | tr -d '\r' | sed -nE 's|^[Ll]ocation:.*/Beeper-(.+)-x86_64\.AppImage$|\1|p')"
+        | tr -d '\r' | sed -nE 's|^[Ll]ocation:.*/Beeper-(.+)-x86_64\.AppImage$|\1|p' || true)"
     echo "baked in image: ${baked}"
     echo "latest stable:  ${latest:-unknown (offline?)}"
     if [ -n "${latest}" ] && [ "${baked}" != "${latest}" ]; then
@@ -62,7 +64,7 @@ windscribe-version:
     echo "baked in image: ${baked}"
     echo "latest release: ${latest:-unknown (offline?)}"
     if [ -n "${latest}" ] && [ "${baked}" != "${latest}" ]; then
-        echo "Update available: bump the windscribe RPM URL (v${latest}) in recipes/recipe.yml"
+        echo "Update available: bump WINDSCRIBE_VERSION/WINDSCRIBE_SHA256 (v${latest}) in config/scripts/getwindscribe.sh"
     fi
 
 alias configure-windscribe := setup-windscribe
@@ -70,7 +72,7 @@ alias configure-windscribe := setup-windscribe
 # Guided Windscribe VPN control (login / connect with kill-switch / disconnect)
 setup-windscribe ACTION="":
     #!/usr/bin/bash
-    OPTION={{ ACTION }}
+    OPTION={{ quote(ACTION) }}
     if [ "$OPTION" == "help" ]; then
       echo "Usage: ujust setup-windscribe <option>"
       echo "  <option>: skip the menu with a quick action"
@@ -111,4 +113,8 @@ setup-windscribe ACTION="":
       echo "Kill-switch turned ${STATE}."
     elif [[ "${OPTION,,}" =~ ^status ]]; then
       windscribe-cli status
+    else
+      echo "Unknown Windscribe action: $OPTION" >&2
+      echo "Run 'ujust setup-windscribe help' for the list of actions." >&2
+      exit 2
     fi

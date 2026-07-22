@@ -27,7 +27,7 @@ SCIENCE_SHA256=a5c966b3d07fb3e4460522d30b962c43eff7b6e15746defe0f37473b9df0a3d3
 SCIENCE_BASE_URL=https://storage.googleapis.com/operon-dist-cf94a20e-f71c-413c-bd00-9e12b1fedf59/operon-releases
 
 echo "Downloading claude-science ${SCIENCE_VERSION} (${SCIENCE_SHA8})..."
-curl -fL --proto '=https' --tlsv1.2 -o /tmp/claude-science \
+curl -fL --retry 3 --retry-delay 5 --retry-all-errors --proto '=https' --tlsv1.2 -o /tmp/claude-science \
   "${SCIENCE_BASE_URL}/${SCIENCE_SHA8}/operon-linux-x64"
 echo "${SCIENCE_SHA256}  /tmp/claude-science" | sha256sum -c -
 install -m 0755 /tmp/claude-science /usr/bin/claude-science

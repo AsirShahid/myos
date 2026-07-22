@@ -1,10 +1,10 @@
 # vim: set ft=make :
-# Waydroid (Android app container) setup, copied from Bazzite's
-# 82-bazzite-waydroid.just. The bluefin-dx base vendors that file under
-# /usr/share/ublue-os/just/ but never imports it into ujust, and it sources
-# /usr/lib/ujust/ujust.sh, which this image doesn't ship — so we carry a
-# self-contained copy that uses gum directly. Needs the waydroid package
-# (recipes/recipe.yml); binder is built into the stock Fedora kernel.
+# Waydroid (Android app container) setup, adapted from Bazzite's
+# 82-bazzite-waydroid.just. The bluefin-dx base doesn't ship a waydroid justfile
+# under /usr/share/ublue-os/just/, and Bazzite's copy sources /usr/lib/ujust/ujust.sh,
+# which this image doesn't ship — so we carry a self-contained copy that uses gum
+# directly. Needs the waydroid package (recipes/recipe.yml); binder is built into
+# the stock Fedora kernel.
 
 alias configure-waydroid := setup-waydroid
 
@@ -13,7 +13,7 @@ setup-waydroid ACTION="":
     #!/usr/bin/bash
     set -euo pipefail
 
-    OPTION={{ ACTION }}
+    OPTION={{ quote(ACTION) }}
     if [ "$OPTION" == "help" ]; then
       echo "Usage: ujust setup-waydroid <option>"
       echo "  <option>: Specify the quick option to skip the prompt"
@@ -45,8 +45,12 @@ setup-waydroid ACTION="":
       git -C "$WORKDIR/repo" checkout -q --detach FETCH_HEAD
 
       python3 -m venv "$WORKDIR/venv"
+      # Pin the helper's deps too: requirements.txt at the pinned commit is
+      # unversioned (tqdm/requests/InquirerPy), so -r would install whatever
+      # PyPI serves that day and then run it as root via the sudo below. Bump
+      # these alongside WAYDROID_SCRIPT_COMMIT.
       "$WORKDIR/venv/bin/python" -m pip install --disable-pip-version-check \
-        -r "$WORKDIR/repo/requirements.txt"
+        tqdm==4.69.0 requests==2.34.2 InquirerPy==0.3.4
 
       # Use the venv interpreter explicitly across sudo. Activating a venv and
       # then running `sudo pip` or a shebang script would bypass it.

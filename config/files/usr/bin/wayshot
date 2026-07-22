@@ -106,12 +106,27 @@ fi
 
 OPTS=()
 if [ -n "$REGION" ]; then
-  OPTS+=("-g $(slurp)")
+  # Capturing slurp separately lets us detect a cancelled selection (Esc gives a
+  # non-zero exit and empty output). Without this, grim would run with an empty
+  # geometry and, in -c mode, still pipe into wl-copy/tee, wiping the clipboard
+  # or truncating the target file while exiting 0.
+  if ! SELECTION=$(slurp) || [ -z "$SELECTION" ]; then
+    echo "Selection cancelled." >&2
+    exit 1
+  fi
+  OPTS+=(-g "$SELECTION")
 fi
 
 if [ -n "$SWAY_WINDOW" ]; then
-  SELECTION=$(swaymsg -t get_tree | jq -r '.. | select(.pid? and .visible?) | .rect | "\(.x),\(.y) \(.width)x\(.height)"' | slurp)
-  OPTS+=("-g $SELECTION")
+  if ! hash swaymsg 2>/dev/null; then
+    echo "-w needs swaymsg (sway only); this image runs GNOME/niri, so it isn't available. Use -s to select a region." >&2
+    exit 1
+  fi
+  if ! SELECTION=$(swaymsg -t get_tree | jq -r '.. | select(.pid? and .visible?) | .rect | "\(.x),\(.y) \(.width)x\(.height)"' | slurp) || [ -z "$SELECTION" ]; then
+    echo "Selection cancelled." >&2
+    exit 1
+  fi
+  OPTS+=(-g "$SELECTION")
 fi
 
 if [ -n "$CURSOR" ]; then
@@ -119,12 +134,14 @@ if [ -n "$CURSOR" ]; then
 fi
 
 if [ -n "$DELAY" ]; then
+  # Countdown goes to stderr: with `-` (or -c), the screenshot bytes go to
+  # stdout, and mixing the countdown in would corrupt the PNG.
   for COUNT in $(seq "$DELAY" -1 1); do
-    echo -n "$COUNT "
+    echo -n "$COUNT " >&2
     sleep 1
   done
-  echo "Smile! :)"
-  echo ""
+  echo "Smile! :)" >&2
+  echo "" >&2
 fi
 
 if [ -n "$CLIPBOARD" ]; then

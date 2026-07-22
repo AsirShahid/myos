@@ -1,10 +1,12 @@
 # GNOME shell modifications
 [org.gnome.shell]
 # Keep this list in sync with the extensions actually present in the image:
-# appindicator + user-theme + launch-new-instance ship with the Bluefin base,
-# pop-shell comes from the gnome-shell-extension-pop-shell rpm, and the rest
-# are installed by the gnome-extensions module in recipe.yml.
-enabled-extensions = ['appindicatorsupport@rgcjonas.gmail.com', 'user-theme@gnome-shell-extensions.gcampax.github.com', 'launch-new-instance@gnome-shell-extensions.gcampax.github.com', 'pop-shell@system76.com', 'blur-my-shell@aunetx', 'nightthemeswitcher@romainvigier.fr', 'caffeine@patapon.info', 'Bluetooth-Battery-Meter@maniacx.github.com', 'copyous@boerdereinar.dev']
+# appindicator + launch-new-instance ship with the Bluefin base, pop-shell comes
+# from the gnome-shell-extension-pop-shell rpm, and the rest are installed by the
+# gnome-extensions module in recipe.yml. (user-theme is NOT shipped by the base,
+# so it's omitted; add the gnome-shell-extension-user-theme rpm to recipe.yml if
+# you want User Themes.)
+enabled-extensions = ['appindicatorsupport@rgcjonas.gmail.com', 'launch-new-instance@gnome-shell-extensions.gcampax.github.com', 'pop-shell@system76.com', 'blur-my-shell@aunetx', 'nightthemeswitcher@romainvigier.fr', 'caffeine@patapon.info', 'Bluetooth-Battery-Meter@maniacx.github.com', 'copyous@boerdereinar.dev']
 
 [org.gnome.desktop.peripherals.touchpad]
 tap-to-click=true

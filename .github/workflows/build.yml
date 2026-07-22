@@ -41,3 +41,11 @@ jobs:
           pr_event_number: ${{ github.event.number }}
           maximize_build_space: true
           rechunk: true
+          # SLSA-verify the bluebuild CLI image before it runs with the signing
+          # key in its environment (the SHA pin only covers this wrapper action,
+          # not the CLI it pulls from a mutable ghcr.io tag).
+          verify_install: true
+          # PR builds (forks and Dependabot) don't get SIGNING_SECRET or a
+          # writable token, so signing/pushing can't work — build only, so the
+          # image still compiles and the PR gets a real green/red signal.
+          push: ${{ github.event_name != 'pull_request' }}

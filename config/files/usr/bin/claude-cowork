@@ -27,7 +27,14 @@ fi
 
 if [[ "${1:-}" == "--reinstall" ]]; then
   shift
-  rm -rf -- "$DEST"
+  # Wipe both the reviewed source mirror and install.sh's own app tree plus the
+  # launchers it generates, so the reinstall actually starts clean. (install.sh
+  # installs into ~/.local/share/claude-desktop, not $DEST, and writes its own
+  # ~/.local/bin launchers that otherwise shadow this one.)
+  rm -rf -- "$DEST" \
+    "${XDG_DATA_HOME:-$HOME/.local/share}/claude-desktop" \
+    "$HOME/.local/bin/claude-desktop" \
+    "$HOME/.local/bin/claude-cowork"
 fi
 
 # Mirror the image's reviewed source into the writable per-user copy while
@@ -48,11 +55,19 @@ fi
 
 # First run: extract & patch Claude Desktop into the user's home. install.sh
 # prompts before downloading the proprietary DMG; pass --force to skip it.
-if [[ ! -d "$DEST/linux-app-extracted" ]]; then
+#
+# install.sh installs into its own INSTALL_DIR ($HOME/.local/share/claude-desktop)
+# and extracts to linux-app-extracted THERE, not under $DEST. Detect first-run
+# against that path, or the wrapper re-runs the whole installer (DMG download and
+# all) on every invocation.
+APP_DIR="${XDG_DATA_HOME:-$HOME/.local/share}/claude-desktop"
+if [[ ! -d "$APP_DIR/linux-app-extracted" ]]; then
   echo "claude-cowork: first run — installing Claude Desktop into your home."
   echo "claude-cowork: this downloads Anthropic's proprietary Claude Desktop DMG."
   exec ./install.sh "$@"
 fi
 
-# Already installed: launch (launch.sh repacks the asar if stubs changed).
-exec ./launch.sh "$@"
+# Already installed: hand off to the launcher install.sh generated. launch.sh
+# only works relative to $APP_DIR (it repacks linux-app-extracted/ next to
+# itself), so drive the app through that launcher rather than the copy in $DEST.
+exec "$HOME/.local/bin/claude-desktop" "$@"

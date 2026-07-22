@@ -27,7 +27,7 @@ import termios
 import time
 import urllib.request
 
-VERSION = "1.3.0"
+VERSION = "1.4.0"
 
 ETC_DIR = "/etc/coldturkey"
 VAR_DIR = "/var/lib/coldturkey"
@@ -503,6 +503,23 @@ def policy_targets(cfg):
             cr_pol["URLBlocklist"] = cr
             if crx:
                 cr_pol["URLAllowlist"] = crx
+        # Push the full uBlock rule set through managed storage: no dashboard
+        # import needed, reapplied every browser launch, and gone when the
+        # policy file is removed (so `off` really turns it off after a browser
+        # restart). toOverwrite.filters owns the "My filters" pane.
+        ub_lines = [ln for ln in build_ublock_list(
+            load_reddit_list(), load_bulk_list()).splitlines() if ln]
+        ubo = {"toOverwrite": {"filters": ub_lines}}
+        ff_pol["policies"]["ExtensionSettings"] = {
+            "uBlock0@raymondhill.net": {
+                "installation_mode": "force_installed",
+                "install_url": "https://addons.mozilla.org/firefox/downloads/latest/ublock-origin/latest.xpi",
+            }
+        }
+        ff_pol["policies"]["3rdparty"] = {"Extensions": {"uBlock0@raymondhill.net": ubo}}
+        cr_pol["ExtensionInstallForcelist"] = [
+            "cjpalhdlnbpafiamejdnhcphjbkeiagm;https://clients2.google.com/service/update2/crx"]
+        cr_pol["3rdparty"] = {"extensions": {"cjpalhdlnbpafiamejdnhcphjbkeiagm": ubo}}
     ffj = json.dumps(ff_pol, indent=2) + "\n"
     crj = json.dumps(cr_pol, indent=2) + "\n"
     t = {
@@ -956,6 +973,18 @@ def cmd_demo(args):
     print("Demo complete." if ok else "Demo aborted.")
 
 
+def cmd_emit(args):
+    """JSON artifacts consumed by the nixos-myos coldturkey module via importJSON."""
+    ff, ffx, cr, crx = build_reddit_patterns(load_reddit_list(), load_bulk_list())
+    ub = [ln for ln in build_ublock_list(load_reddit_list(), load_bulk_list()).splitlines() if ln]
+    os.makedirs(args.dir, exist_ok=True)
+    for name, data in [("ff-block", ff), ("ff-exceptions", ffx), ("cr-block", cr),
+                       ("cr-allow", crx), ("ublock-filters", ub)]:
+        path = os.path.join(args.dir, name + ".json")
+        atomic_write(path, json.dumps(data, indent=1) + "\n")
+        print("wrote %s (%d entries)" % (path, len(data)))
+
+
 def cmd_uninstall(args):
     cfg = load_config()
     if not challenge(cfg, "uninstall coldturkey"):
@@ -1064,6 +1093,10 @@ def main():
     sp = sub.add_parser("demo", help="try the typed-code challenge, no side effects")
     sp.add_argument("--length", type=int, default=None)
     sp.set_defaults(fn=cmd_demo)
+
+    sp = sub.add_parser("emit", help="write pattern/rule artifacts as JSON (for the NixOS config)")
+    sp.add_argument("dir")
+    sp.set_defaults(fn=cmd_emit)
 
     sp = sub.add_parser("uninstall", help="remove everything (typed-code challenge)")
     sp.set_defaults(fn=cmd_uninstall)

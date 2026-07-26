@@ -6,5 +6,6 @@ Exec=/usr/bin/beeper --enable-features=UseOzonePlatform,WaylandWindowDecorations
 Icon=/usr/share/icons/beeper.png
 Terminal=false
 Categories=Network;Chat;
+MimeType=x-scheme-handler/beeper;
 StartupWMClass=Beeper
 StartupNotify=true

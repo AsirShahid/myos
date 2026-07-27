@@ -18,6 +18,7 @@ modules:
         - yuezk/globalprotect-openconnect
         - yalter/niri
         - solopasha/hyprland  # hyprlock/hypridle (also source of hypr* tools already in the image)
+        - avengemedia/danklinux  # dms-greeter + quickshell
       files:
         - https://repository.mullvad.net/rpm/stable/mullvad.repo
     install:
@@ -72,6 +73,16 @@ modules:
         - hyprlock  # copr: solopasha/hyprland
         - hypridle  # copr: solopasha/hyprland
         - SwayNotificationCenter  # swaync: notification daemon + control center
+
+        # Login screen: greetd running the DankMaterialShell greeter, so the
+        # login surface is the same one as the lock screen. Pulls in greetd
+        # (Fedora) and quickshell (danklinux copr). The dms CLI itself is still
+        # layered locally, not baked here; `dms greeter sync` needs it to push
+        # wallpaper/theme into /var/cache/dms-greeter.
+        # Shipping the packages does NOT flip the display manager. Run
+        # `dms greeter enable` once on the host to write /etc/greetd/config.toml
+        # and swap gdm out; that lives in /etc so it survives image updates.
+        - dms-greeter  # copr: avengemedia/danklinux
 
         # AGS v2 desktop shell (bar/quick-settings/notifications, ~/.config/ags).
         # niri-shell script prefers it over waybar+swaync once present.
@@ -231,6 +242,7 @@ modules:
           - com.system76.Popsicle
           - com.wireframesketcher.WireframeSketcher
           - de.haeckerfelix.Fragments
+          - dev.fredol.open-tv # IPTV player for Dispatcharr (added 2026-07-26)
           - io.github.dvlv.boxbuddyrs
           - io.github.kolunmi.Bazaar
           - io.mgba.mGBA
@@ -263,6 +275,11 @@ modules:
           - org.mozilla.thunderbird_esr
           - org.onlyoffice.desktopeditors
           - org.videolan.VLC
+          # Known risk, accepted 2026-07-26: PlexDesktop still pins the EOL
+          # freedesktop 23.08 runtime (both official Plex flatpaks do). Upstream
+          # fix pending: https://github.com/flathub/tv.plex.PlexDesktop/pull/139
+          # bumps to 25.08; a regular flatpak update picks it up once merged.
+          - tv.plex.PlexDesktop # (added 2026-07-26)
           - us.zoom.Zoom
       - scope: user
         repo:

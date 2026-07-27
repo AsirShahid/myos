@@ -1,0 +1,10 @@
+# Framework 13 AMD (Ryzen 7040): disable Panel Self Refresh.
+# Symptom: after resuming from s2idle the panel keeps showing its last
+# self-refreshed frame, so the desktop looks frozen while the machine is
+# actually alive and still accepting input. The kernel logs
+# "WARNING: .../display/dc/dce/dmub_psr.c:223 at dmub_psr_enable", which is
+# the assert after DMUB runs out of retries waiting for a PSR state change.
+# Diagnosed 2026-07-27 from the Jul 26/27 wake, where the lock screen accepted
+# a password and unlocked while the screen never repainted.
+# 0x10 = DC_DISABLE_PSR. Use 0x210 to also disable PSR-SU if it comes back.
+kargs = ["amdgpu.dcdebugmask=0x10"]

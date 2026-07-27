@@ -18,7 +18,9 @@ modules:
         - yuezk/globalprotect-openconnect
         - yalter/niri
         - solopasha/hyprland  # hyprlock/hypridle (also source of hypr* tools already in the image)
-        - avengemedia/danklinux  # dms-greeter + quickshell
+        - avengemedia/danklinux  # dms-greeter + quickshell + danksearch + material-symbols-fonts
+        - avengemedia/dms  # the dms CLI/shell itself (separate copr from danklinux)
+        - scottames/ghostty
       files:
         - https://repository.mullvad.net/rpm/stable/mullvad.repo
     install:
@@ -76,13 +78,44 @@ modules:
 
         # Login screen: greetd running the DankMaterialShell greeter, so the
         # login surface is the same one as the lock screen. Pulls in greetd
-        # (Fedora) and quickshell (danklinux copr). The dms CLI itself is still
-        # layered locally, not baked here; `dms greeter sync` needs it to push
-        # wallpaper/theme into /var/cache/dms-greeter.
+        # (Fedora) and quickshell (danklinux copr).
         # Shipping the packages does NOT flip the display manager. Run
         # `dms greeter enable` once on the host to write /etc/greetd/config.toml
         # and swap gdm out; that lives in /etc so it survives image updates.
         - dms-greeter  # copr: avengemedia/danklinux
+
+        # DankMaterialShell desktop (the sidescroll rice). These were local
+        # rpm-ostree layers until 2026-07-27; see the pinned block further down
+        # for why they are not just listed here as bare names.
+        - danksearch  # copr: avengemedia/danklinux; file-search backend for the launcher
+        - material-symbols-fonts  # copr: avengemedia/danklinux
+        - wf-recorder
+        - poppler-utils  # pdftotext, for indexing PDF text into danksearch
+        # Recommends of dms, named explicitly because the dms install below
+        # runs with install-weak-deps: false. cava drives the audio visualiser.
+        - cava
+        - qt6-qtmultimedia
+
+        # matugen MUST come from Fedora, not from the danklinux copr. Fedora has
+        # 3.1.0, danklinux has 4.1.0, and the rice is built and verified against
+        # 3.1.0 (DMS takes a different code path for v4). On the host this pin is
+        # enforced by `excludepkgs=matugen ghostty cliphist qt6ct-kde` in the
+        # danklinux .repo file, which the image build does not inherit.
+        # matugen is a *Recommends* of dms, so a plain `- dms` with weak deps on
+        # would silently drag in 4.1.0. Hence: pin matugen to the fedora repo,
+        # and install dms with weak deps off.
+        - repo: fedora
+          packages:
+            - matugen
+        # No repo: scoping needed here, avengemedia/dms is the only repo that
+        # carries dms. The weak-deps flag is the load-bearing part.
+        - install-weak-deps: false
+          packages:
+            - dms
+        # Same story for ghostty: danklinux has 1.3.1-1, scottames has 1.3.1-2.
+        - repo: copr:copr.fedorainfracloud.org:scottames:ghostty
+          packages:
+            - ghostty
 
         # AGS v2 desktop shell (bar/quick-settings/notifications, ~/.config/ags).
         # niri-shell script prefers it over waybar+swaync once present.

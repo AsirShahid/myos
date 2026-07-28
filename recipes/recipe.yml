@@ -107,9 +107,11 @@ modules:
         - repo: fedora
           packages:
             - matugen
-        # No repo: scoping needed here, avengemedia/dms is the only repo that
-        # carries dms. The weak-deps flag is the load-bearing part.
-        - install-weak-deps: false
+        # Scope dms explicitly to its COPR while disabling weak dependencies.
+        # BlueBuild's dnf module reads `repo` from every object-form package
+        # entry, even though its schema marks the field optional.
+        - repo: copr:copr.fedorainfracloud.org:avengemedia:dms
+          install-weak-deps: false
           packages:
             - dms
         # Same story for ghostty: danklinux has 1.3.1-1, scottames has 1.3.1-2.

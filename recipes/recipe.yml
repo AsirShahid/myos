@@ -91,6 +91,10 @@ modules:
         - material-symbols-fonts  # copr: avengemedia/danklinux
         - wf-recorder
         - poppler-utils  # pdftotext, for indexing PDF text into danksearch
+        # Hard dep of dms, named explicitly because the repo-scoped dms
+        # install below can only see the avengemedia:dms copr, which does not
+        # ship dgop. Installing it here first satisfies the dependency.
+        - dgop  # copr: avengemedia/danklinux
         # Recommends of dms, named explicitly because the dms install below
         # runs with install-weak-deps: false. cava drives the audio visualiser.
         - cava

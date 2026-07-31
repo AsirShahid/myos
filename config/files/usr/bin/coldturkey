@@ -4,7 +4,8 @@
 Layers:
   1. /etc/hosts blocklist (StevenBlack unified+porn) + SafeSearch pins + Firefox DoH canary
   2. systemd-resolved global DNS -> Cloudflare family (1.1.1.3), all networks
-  3. Browser enterprise policies: DNS-over-HTTPS off and locked (Firefox, Zen, Chromium)
+  3. Browser enterprise policies: DNS-over-HTTPS off and locked (Firefox, Zen,
+     Chromium; flatpaks reached via extension dirs under /var/lib/flatpak/extension)
 
 Enforced by a systemd timer + path unit that revert tampering. Turning anything
 off requires transcribing a random code shown on screen. Pasting is detected
@@ -27,7 +28,7 @@ import termios
 import time
 import urllib.request
 
-VERSION = "1.4.0"
+VERSION = "1.5.1"
 
 ETC_DIR = "/etc/coldturkey"
 VAR_DIR = "/var/lib/coldturkey"
@@ -79,7 +80,11 @@ DNSOverTLS=opportunistic
 """
 
 POLICY_FIREFOX = {"policies": {"DNSOverHTTPS": {"Enabled": False, "Locked": True}}}
-POLICY_CHROMIUM = {"DnsOverHttpsMode": "off", "ForceGoogleSafeSearch": True}
+# SafeSitesFilterBehavior 1 = Chromium's built-in adult filter (Safe Search
+# API URL classification); catches sites and reddit paths the 1000-entry
+# URLBlocklist cap leaves uncovered.
+POLICY_CHROMIUM = {"DnsOverHttpsMode": "off", "ForceGoogleSafeSearch": True,
+                   "SafeSitesFilterBehavior": 1}
 
 UNITS = {
     "coldturkey-enforce.service": """\
@@ -159,7 +164,10 @@ WantedBy=multi-user.target
 ENABLE_UNITS = ["coldturkey-enforce.timer", "coldturkey-watch.path",
                 "coldturkey-update.timer", "coldturkey-listserv.service"]
 
-FLATPAK_OVERRIDES = [
+# Legacy /etc binds asserted by <= 1.4.0. Flatpak refuses to mount anything
+# under /etc ("Path /etc is reserved"), so these never worked; 1.5.0 removes
+# them and reaches the sandboxes through extension dirs instead (policy_targets).
+FLATPAK_STALE_OVERRIDES = [
     ("app.zen_browser.zen", "/etc/zen"),
     ("org.chromium.Chromium", "/etc/chromium"),
 ]
@@ -517,9 +525,11 @@ def policy_targets(cfg):
             }
         }
         ff_pol["policies"]["3rdparty"] = {"Extensions": {"uBlock0@raymondhill.net": ubo}}
-        cr_pol["ExtensionInstallForcelist"] = [
-            "cjpalhdlnbpafiamejdnhcphjbkeiagm;https://clients2.google.com/service/update2/crx"]
-        cr_pol["3rdparty"] = {"extensions": {"cjpalhdlnbpafiamejdnhcphjbkeiagm": ubo}}
+        # No uBlock on Chromium: uBlock Origin is Manifest V2, and Chromium
+        # 150 dropped ExtensionManifestV2Availability, so a force-install can
+        # only fail (DISALLOWED_BY_POLICY). uBO Lite's managed storage takes
+        # no custom lists, so it can't carry these rules either. Chromium
+        # relies on URLBlocklist + SafeSitesFilterBehavior + hosts/DNS.
     ffj = json.dumps(ff_pol, indent=2) + "\n"
     crj = json.dumps(cr_pol, indent=2) + "\n"
     t = {
@@ -533,15 +543,32 @@ def policy_targets(cfg):
         base = "/var/lib/flatpak/extension/org.mozilla.firefox.systemconfig/x86_64/stable"
         t[os.path.join(base, "policies.json")] = ffj
         t[os.path.join(base, "policies", "policies.json")] = ffj
+    if os.path.isdir("/var/lib/flatpak/app/app.zen_browser.zen"):
+        base = "/var/lib/flatpak/extension/app.zen_browser.zen.systemconfig/x86_64/stable"
+        t[os.path.join(base, "policies.json")] = ffj
+        t[os.path.join(base, "policies", "policies.json")] = ffj
+    if os.path.isdir("/var/lib/flatpak/app/org.chromium.Chromium"):
+        # .Policy subextensions merge into /app/chromium/policies/policies/
+        # managed, which the base image symlinks from /app/chromium/extensions/
+        # policies (the path compiled into the flathub build). The suffix must
+        # not be "policies": that collides with the merged dir and bwrap then
+        # aborts the whole sandbox. Other files here (e.g. webapps.json) are
+        # left alone.
+        base = ("/var/lib/flatpak/extension/"
+                "org.chromium.Chromium.Policy.local/x86_64/1")
+        t[os.path.join(base, "policies", "managed", "coldturkey.json")] = crj
     return t
 
 
 def assert_flatpak_overrides():
+    """Neutralize the /etc binds older versions asserted. Flatpak reserves /etc
+    so they never mounted; --nofilesystem drops the old override grant (and
+    masks any manifest-level grant) so launches stop warning about it."""
     if not shutil.which("flatpak"):
         return
-    for app, path in FLATPAK_OVERRIDES:
+    for app, path in FLATPAK_STALE_OVERRIDES:
         if os.path.isdir("/var/lib/flatpak/app/" + app):
-            run(["flatpak", "override", "--system", "--filesystem=%s:ro" % path, app])
+            run(["flatpak", "override", "--system", "--nofilesystem=" + path, app])
 
 
 def ensure_units():

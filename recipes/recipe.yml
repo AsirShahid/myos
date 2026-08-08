@@ -147,6 +147,15 @@ modules:
         - pulseaudio-utils
         - pamixer
         - playerctl
+        # IPTVnator (com.fourgray.iptvnator) detects that it is running in a
+        # flatpak and always launches its external player on the host, as
+        # `flatpak-spawn --host --watch-bus mpv <args>`. With no host mpv the
+        # portal call fails and the app reports it as
+        # "MPV player closed unexpectedly (exit code: 1)". Its player-path
+        # setting takes a single binary path, so it cannot be pointed at
+        # `flatpak run io.mpv.Mpv` instead. Plain Fedora mpv is enough here:
+        # the bluefin-dx base already ships full ffmpeg, not ffmpeg-free.
+        - mpv  # (added 2026-08-08)
 
         # Bluetooth
         - bluez-tools

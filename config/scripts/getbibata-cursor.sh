@@ -14,7 +14,7 @@ set -oue pipefail
 #
 # The default cursor theme is set image-wide via the gschema override
 # (org.gnome.desktop.interface cursor-theme); niri reads it from ~/.config/niri
-# and Hyprland from ~/.config/hypr/themes/common.conf (both in the dotfiles).
+# in the dotfiles.
 BIBATA_VERSION=2.0.7
 BIBATA_SHA256=a68cae60c4dc706350e194ebc91c5fe48bc7bc9d59e119555834a2a7ee5078ef
 

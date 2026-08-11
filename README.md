@@ -3,9 +3,9 @@
 My personal OS image, built with [BlueBuild](https://blue-build.org/) on top of
 [Bluefin DX](https://projectbluefin.io/). On top of the base it adds:
 
-- **niri** (scrollable-tiling Wayland compositor) plus its session stack
-  (hyprlock, hypridle, SwayNotificationCenter, AGS/aylurs-gtk-shell) and wlroots
-  tooling (fuzzel, grim/slurp, dunst, swappy, …) alongside the stock GNOME desktop
+- **niri** (scrollable-tiling Wayland compositor) plus SwayNotificationCenter and
+  wlroots tooling (fuzzel, grim/slurp, dunst, swappy, …) alongside the stock GNOME
+  desktop
 - **GNOME tweaks**: pop-shell tiling, Blur my Shell, Night Theme Switcher,
   Caffeine, Bluetooth Battery Meter, and Copyous, enabled via gschema override,
   plus the Bibata-Modern-Ice cursor theme

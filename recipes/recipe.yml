@@ -17,7 +17,6 @@ modules:
         - atim/starship
         - yuezk/globalprotect-openconnect
         - yalter/niri
-        - solopasha/hyprland  # hyprlock/hypridle (also source of hypr* tools already in the image)
         - avengemedia/danklinux  # dms-greeter + quickshell + danksearch + material-symbols-fonts
         - avengemedia/dms  # the dms CLI/shell itself (separate copr from danklinux)
         - scottames/ghostty
@@ -70,10 +69,8 @@ modules:
         # Window Managers
         - niri  # copr: yalter/niri
 
-        # Niri session extras (session configs live in dotfiles:
-        # ~/.config/niri, ~/.config/hypr/hypr{lock,idle}.conf, ~/.config/swaync)
-        - hyprlock  # copr: solopasha/hyprland
-        - hypridle  # copr: solopasha/hyprland
+        # Niri notification daemon/control center. Session configuration lives
+        # in ~/.config/niri and ~/.config/swaync in the dotfiles.
         - SwayNotificationCenter  # swaync: notification daemon + control center
 
         # Login screen: greetd running the DankMaterialShell greeter, so the
@@ -122,12 +119,6 @@ modules:
         - repo: copr:copr.fedorainfracloud.org:scottames:ghostty
           packages:
             - ghostty
-
-        # AGS v2 desktop shell (bar/quick-settings/notifications, ~/.config/ags).
-        # niri-shell script prefers it over waybar+swaync once present.
-        - aylurs-gtk-shell2  # ags CLI + runtime; copr: solopasha/hyprland
-        - astal-gtk4  # copr: solopasha/hyprland
-        - astal-libs  # Astal{Battery,Network,Bluetooth,Mpris,Notifd,Tray,Wp,…} typelibs
 
         # Wayland Tools
         - fuzzel

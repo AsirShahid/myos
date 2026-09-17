@@ -33,7 +33,7 @@ jobs:
       # Pin actions to immutable commit SHAs because this workflow can publish
       # packages, mint OIDC tokens, and access the image-signing secret.
       - name: Build Custom Image
-        uses: blue-build/github-action@836161eb076426a451e6a0054f722b1153b8b3ad # v1.12
+        uses: blue-build/github-action@c295af864f2802fc6aea227507af43d35823db81 # v1.13.0
         with:
           recipe: ${{ matrix.recipe }}
           cosign_private_key: ${{ secrets.SIGNING_SECRET }}

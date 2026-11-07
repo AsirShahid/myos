@@ -45,6 +45,11 @@ jobs:
           # key in its environment (the SHA pin only covers this wrapper action,
           # not the CLI it pulls from a mutable ghcr.io tag).
           verify_install: true
+          # Pinned because the floating v0.9-installer tag points at a broken
+          # release with no SLSA attestation (blue-build/cli#911, Nov 2026), so
+          # verify_install fails. v0.9.41 is attested. Drop the pin once #911 is
+          # closed and v0.9-installer has an attestation again.
+          cli_version: v0.9.41
           # PR builds (forks and Dependabot) don't get SIGNING_SECRET or a
           # writable token, so signing/pushing can't work — build only, so the
           # image still compiles and the PR gets a real green/red signal.
